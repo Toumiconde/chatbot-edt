@@ -1,222 +1,1063 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot EDT — UGANC</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot EDT — UGANC</title>
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
+  <!-- Lucide Icons — icônes professionnelles SVG -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    * { font-family: 'Inter', sans-serif; box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    body {
+      background: linear-gradient(135deg, #0D1B2A 0%, #1B4FD8 100%);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 16px;
+    }
+ 
+    /* ── CONTENEUR ── */
+    .chat-container {
+      width: 100%; max-width: 500px;
+      height: 88vh; max-height: 740px;
+      background: #F8FAFF;
+      border-radius: 28px;
+      box-shadow: 0 40px 100px rgba(0,0,0,.4);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+ 
+    /* ── HEADER ── */
+    .chat-header {
+      background: linear-gradient(135deg, #0D1B2A 0%, #1B4FD8 100%);
+      padding: 16px 20px;
+      display: flex; align-items: center; gap: 12px;
+      flex-shrink: 0;
+    }
+ 
+    .header-logo {
+      width: 44px; height: 44px;
+      background: rgba(255,255,255,.12);
+      border: 1.5px solid rgba(255,255,255,.25);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+ 
+    .header-logo svg { color: #fff; }
+ 
+    .header-info h1 {
+      color: #fff; font-size: 15px; font-weight: 700; margin-bottom: 2px;
+    }
+ 
+    .header-info p { color: rgba(255,255,255,.55); font-size: 11.5px; }
+ 
+    .header-status {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 5px;
+    }
+ 
+    .status-dot {
+      width: 8px; height: 8px; background: #4ADE80;
+      border-radius: 50%; animation: pulse 2s infinite;
+    }
+ 
+    @keyframes pulse {
+      0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74,222,128,.4); }
+      50%      { opacity: .7; box-shadow: 0 0 0 4px rgba(74,222,128,0); }
+    }
+ 
+    .status-text { color: rgba(255,255,255,.6); font-size: 11px; font-weight: 500; }
+ 
+    /* ── BREADCRUMB ── */
+    #breadcrumb {
+      padding: 8px 16px;
+      background: #EFF6FF;
+      border-bottom: 1px solid #DBEAFE;
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11.5px; color: #3B82F6; font-weight: 500;
+      flex-shrink: 0; flex-wrap: wrap;
+      min-height: 34px;
+    }
+ 
+    #breadcrumb span { display: flex; align-items: center; gap: 3px; }
+    #breadcrumb .sep { color: #93C5FD; font-size: 10px; }
+ 
+    /* ── CORPS CHAT ── */
+    #chat-body {
+      flex: 1; overflow-y: auto;
+      padding: 16px 14px;
+      display: flex; flex-direction: column; gap: 10px;
+      scroll-behavior: smooth;
+      background: #F8FAFF;
+    }
+ 
+    #chat-body::-webkit-scrollbar { width: 3px; }
+    #chat-body::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 2px; }
+ 
+    /* ── BULLES ── */
+    .msg-bot {
+      display: flex; align-items: flex-end; gap: 8px;
+      animation: msgIn .22s ease;
+    }
+ 
+    .msg-user {
+      display: flex; justify-content: flex-end;
+      animation: msgIn .22s ease;
+    }
+ 
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+ 
+    .bot-av {
+      width: 30px; height: 30px;
+      background: linear-gradient(135deg, #1B4FD8, #0EA5E9);
+      border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+ 
+    .bot-av svg { color: #fff; }
+ 
+    .bubble-bot {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 18px 18px 18px 4px;
+      padding: 10px 14px;
+      max-width: 80%;
+      font-size: 13.5px; color: #1E293B; line-height: 1.6;
+      box-shadow: 0 1px 4px rgba(0,0,0,.05);
+    }
+ 
+    .bubble-user {
+      background: linear-gradient(135deg, #1B4FD8, #0EA5E9);
+      border-radius: 18px 18px 4px 18px;
+      padding: 10px 14px;
+      max-width: 80%;
+      font-size: 13.5px; color: #fff; line-height: 1.6;
+      box-shadow: 0 3px 10px rgba(27,79,216,.3);
+    }
+ 
+    /* ── ALERT CARD ── */
+    .alert-card {
+      background: #FFFBEB;
+      border: 1px solid #FCD34D;
+      border-left: 4px solid #F59E0B;
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 12.5px; color: #78350F;
+      animation: msgIn .22s ease;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+ 
+    .alert-card .ac-title {
+      display: flex; align-items: center; gap: 6px;
+      font-weight: 600; font-size: 13px; color: #92400E;
+    }
+ 
+    .alert-card .ac-body {
+      display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    }
+ 
+    .ac-tag {
+      background: #FEF3C7; border: 1px solid #FCD34D;
+      padding: 2px 8px; border-radius: 50px;
+      font-size: 11px; font-weight: 600; color: #92400E;
+    }
+ 
+    .ac-arrow { color: #F59E0B; }
+    .ac-motif { font-size: 11.5px; color: #B45309; display: flex; align-items: center; gap: 4px; }
+ 
+    /* ── TABLEAU ── */
+    .table-wrapper {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 14px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      animation: msgIn .22s ease;
+      overflow-x: auto;
+    }
+ 
+    .edt-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+ 
+    .edt-table thead tr {
+      background: linear-gradient(135deg, #0D1B2A 0%, #1B4FD8 100%);
+    }
+ 
+    .edt-table thead th {
+      padding: 9px 10px; text-align: left;
+      color: #fff; font-size: 11px; font-weight: 600;
+      letter-spacing: .03em; white-space: nowrap;
+    }
+ 
+    .edt-table thead th .th-inner {
+      display: flex; align-items: center; gap: 5px;
+    }
+ 
+    .edt-table tbody tr:nth-child(even) { background: #F0F6FF; }
+    .edt-table tbody tr { transition: background .15s; }
+    .edt-table tbody tr:hover { background: #DBEAFE; }
+ 
+    .edt-table tbody td {
+      padding: 8px 10px; color: #334155;
+      border-bottom: 1px solid #F1F5F9;
+      white-space: nowrap;
+    }
+ 
+    .td-heure {
+      font-weight: 700; color: #1B4FD8;
+      font-family: 'Courier New', monospace; font-size: 11px;
+      display: flex; align-items: center; gap: 4px;
+    }
+ 
+    .td-matiere { font-weight: 600; color: #0F172A; }
+    .td-enseignant { display: flex; align-items: center; gap: 5px; }
+    .td-salle { display: flex; align-items: center; gap: 4px; color: #64748B; }
+ 
+    /* ── DAY LABEL ── */
+    .day-label {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 700;
+      color: #64748B; letter-spacing: .08em;
+      text-transform: uppercase; margin: 4px 0;
+    }
+    .day-label::before, .day-label::after {
+      content: ''; flex: 1; height: 1px; background: #E2E8F0;
+    }
+ 
+    /* ── EMPTY ── */
+    .empty-msg {
+      text-align: center; padding: 20px 16px;
+      color: #94A3B8; font-size: 13px;
+      background: #F8FAFF;
+      border: 1.5px dashed #CBD5E1;
+      border-radius: 14px;
+      animation: msgIn .22s ease;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+ 
+    .empty-msg svg { color: #CBD5E1; }
+ 
+    /* ── LOADER ── */
+    .loader-wrap { display: flex; align-items: flex-end; gap: 8px; }
+    .loader-bubble {
+      background: #fff;
+      border: 1px solid #E2E8F0;
+      border-radius: 18px 18px 18px 4px;
+      padding: 13px 16px;
+      display: flex; gap: 4px; align-items: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,.05);
+    }
+    .dot {
+      width: 7px; height: 7px; background: #94A3B8;
+      border-radius: 50%; animation: bounce .9s infinite;
+    }
+    .dot:nth-child(2) { animation-delay: .15s; }
+    .dot:nth-child(3) { animation-delay: .3s; }
+ 
+    @keyframes bounce {
+      0%,80%,100% { transform: translateY(0); }
+      40%          { transform: translateY(-6px); }
+    }
+ 
+    /* ── ZONE OPTIONS ── */
+    #chat-options {
+      padding: 10px 14px 12px;
+      background: #fff;
+      border-top: 1px solid #F1F5F9;
+      display: flex; flex-wrap: wrap; gap: 6px;
+      flex-shrink: 0; min-height: 54px; align-items: center;
+    }
+ 
+    /* ── ZONE SAISIE TEXTE ── */
+    #chat-input-zone {
+      padding: 10px 14px;
+      background: #fff;
+      border-top: 1px solid #F1F5F9;
+      display: flex; align-items: center; gap: 8px;
+      flex-shrink: 0;
+    }
+ 
+    #chat-input {
+      flex: 1;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 50px;
+      padding: 9px 16px;
+      font-size: 13px;
+      color: #1E293B;
+      outline: none;
+      transition: border-color .15s;
+      background: #F8FAFF;
+    }
+ 
+    #chat-input:focus {
+      border-color: #1B4FD8;
+      background: #fff;
+    }
+ 
+    #chat-input::placeholder { color: #94A3B8; }
+ 
+    #chat-send {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #1B4FD8, #0EA5E9);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      flex-shrink: 0;
+    }
+ 
+    #chat-send:hover {
+      transform: scale(1.06);
+      box-shadow: 0 4px 14px rgba(27,79,216,.35);
+    }
+ 
+    #chat-send:active { transform: scale(.96); }
+ 
+    /* ── SUGGESTIONS RAPIDES ── */
+    .quick-suggestions {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      padding: 0 14px 8px;
+      background: #fff;
+    }
+ 
+    .quick-tag {
+      font-size: 11px; color: #94A3B8;
+      background: #F1F5F9;
+      border: 1px solid #E2E8F0;
+      border-radius: 50px;
+      padding: 3px 10px;
+      cursor: pointer;
+      transition: all .15s;
+      display: flex; align-items: center; gap: 4px;
+    }
+ 
+    .quick-tag:hover {
+      background: #DBEAFE; color: #1B4FD8; border-color: #93C5FD;
+    }
+ 
+    /* ── BOUTONS ── */
+    .opt-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px;
+      border-radius: 50px;
+      font-size: 12.5px; font-weight: 500;
+      cursor: pointer;
+      transition: all .18s ease;
+      white-space: nowrap;
+      border: 1.5px solid #1B4FD8;
+      background: #fff; color: #1B4FD8;
+    }
+ 
+    .opt-btn svg { flex-shrink: 0; }
+ 
+    .opt-btn:hover {
+      background: #1B4FD8; color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(27,79,216,.3);
+    }
+ 
+    .opt-btn:active { transform: translateY(0); }
+ 
+    .opt-btn.primary { background: #1B4FD8; color: #fff; }
+    .opt-btn.primary:hover { background: #1438A0; }
+ 
+    .opt-btn.success { border-color: #10B981; color: #10B981; }
+    .opt-btn.success:hover { background: #10B981; color: #fff; box-shadow: 0 4px 14px rgba(16,185,129,.3); }
+ 
+    .opt-btn.danger { border-color: #EF4444; color: #EF4444; }
+    .opt-btn.danger:hover { background: #EF4444; color: #fff; box-shadow: 0 4px 14px rgba(239,68,68,.3); }
+ 
+    .opt-btn.warn { border-color: #F59E0B; color: #F59E0B; }
+    .opt-btn.warn:hover { background: #F59E0B; color: #fff; }
+ 
+    /* ── RESPONSIVE MOBILE ── */
+    @media (max-width: 520px) {
+      body { padding: 0; align-items: flex-end; }
+      .chat-container {
+        max-width: 100%; height: 100vh; max-height: 100vh;
+        border-radius: 24px 24px 0 0;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="w-full max-w-lg bg-white rounded-2xl shadow-lg overflow-hidden">
-        {{-- Header --}}
-        <div class="bg-green-700 text-white px-6 py-4">
-            <h1 class="text-xl font-bold">Chatbot EDT — Centre Informatique UGANC</h1>
-            <p class="text-sm opacity-80">Groupe 6 — 2024/2025</p>
-        </div>
-
-        {{-- Messages --}}
-        <div id="messages" class="flex flex-col gap-3 p-4 h-96 overflow-y-auto bg-gray-50">
-            <div class="self-start bg-green-100 text-green-900 rounded-xl px-4 py-2 text-sm max-w-xs">
-                Bonjour ! Je suis votre assistant EDT. Choisissez une option ci-dessous.
-            </div>
-        </div>
-
-        {{-- Boutons d'actions rapides --}}
-        <div id="actions" class="flex flex-wrap gap-2 px-4 py-3 border-t border-gray-200 bg-white">
-            <button onclick="chargerFilieres()" class="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1.5 rounded-lg">
-                Voir l'EDT
-            </button>
-            <button onclick="voirEnseignants()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1.5 rounded-lg">
-                EDT Enseignant
-            </button>
-            <button onclick="voirAlertes()" class="bg-orange-500 hover:bg-orange-600 text-white text-sm px-3 py-1.5 rounded-lg">
-                Alertes (48h)
-            </button>
-        </div>
-
-        {{-- Sélecteurs dynamiques --}}
-        <div id="selectors" class="px-4 pb-4 space-y-2 bg-white"></div>
+<body>
+ 
+<div class="chat-container">
+ 
+  <!-- ═══ HEADER ═══ -->
+  <div class="chat-header">
+    <div class="header-logo">
+      <i data-lucide="graduation-cap" style="width:22px;height:22px"></i>
     </div>
-
+    <div class="header-info">
+      <h1>Chatbot EDT — UGANC</h1>
+      <p>Centre Informatique · Groupe 6</p>
+    </div>
+    <div class="header-status">
+      <div class="status-dot"></div>
+      <span class="status-text">En ligne</span>
+    </div>
+  </div>
+ 
+  <!-- ═══ BREADCRUMB ═══ -->
+  <div id="breadcrumb">
+    <span><i data-lucide="home" style="width:12px;height:12px"></i> Accueil</span>
+  </div>
+ 
+  <!-- ═══ CORPS ═══ -->
+  <div id="chat-body"></div>
+ 
+  <!-- ═══ SUGGESTIONS RAPIDES ═══ -->
+  <div class="quick-suggestions" id="quick-suggestions"></div>
+ 
+  <!-- ═══ OPTIONS (boutons) ═══ -->
+  <div id="chat-options"></div>
+ 
+  <!-- ═══ SAISIE TEXTE ═══ -->
+  <div id="chat-input-zone">
+    <input type="text" id="chat-input" placeholder="Écrivez ici… ex : edt, alertes, lundi">
+    <button id="chat-send">
+      <i data-lucide="send" style="width:16px;height:16px"></i>
+    </button>
+  </div>
+ 
+</div>
+ 
 <script>
-const BASE = '/api';
-
-function ajouterMessage(texte, type = 'bot') {
-    const div = document.createElement('div');
-    div.className = type === 'bot'
-        ? 'self-start bg-green-100 text-green-900 rounded-xl px-4 py-2 text-sm max-w-xs'
-        : 'self-end bg-green-600 text-white rounded-xl px-4 py-2 text-sm max-w-xs';
-    div.innerHTML = texte;
-    document.getElementById('messages').appendChild(div);
-    div.scrollIntoView({ behavior: 'smooth' });
+// ─────────────────────────────────────────
+// VARIABLES GLOBALES
+// ─────────────────────────────────────────
+let selectedFiliereId   = null;
+let selectedFiliereNom  = null;
+let selectedNiveauId    = null;
+let selectedNiveauNom   = null;
+let selectedJour        = null;
+let selectedEnseignant  = null;
+ 
+// ─────────────────────────────────────────
+// BREADCRUMB — fil d'ariane en haut
+// ─────────────────────────────────────────
+function updateBreadcrumb(steps) {
+  const bc = document.getElementById('breadcrumb');
+  bc.innerHTML = steps.map((s, i) =>
+    `<span>${s}</span>${i < steps.length - 1 ? '<span class="sep">›</span>' : ''}`
+  ).join('');
+  lucide.createIcons();
 }
-
-function viderSelectors() {
-    document.getElementById('selectors').innerHTML = '';
-}
-
-async function chargerFilieres() {
-    viderSelectors();
-    ajouterMessage('Chargement des filières...', 'user');
-    const res = await fetch(`${BASE}/filieres`);
-    const filieres = await res.json();
-
-    let html = '<label class="text-sm font-semibold text-gray-700">Choisissez une filière :</label>';
-    html += '<select id="sel-filiere" class="w-full border rounded-lg px-3 py-2 text-sm" onchange="chargerNiveaux(this.value)">';
-    html += '<option value="">-- Filière --</option>';
-    filieres.forEach(f => { html += `<option value="${f.id}">${f.nom}</option>`; });
-    html += '</select>';
-    document.getElementById('selectors').innerHTML = html;
-}
-
-async function chargerNiveaux(filiereId) {
-    if (!filiereId) return;
-    const sel = document.getElementById('selectors');
-    const existing = document.getElementById('sel-niveau-wrap');
-    if (existing) existing.remove();
-
-    const res = await fetch(`${BASE}/niveaux/${filiereId}`);
-    const niveaux = await res.json();
-
-    const wrap = document.createElement('div');
-    wrap.id = 'sel-niveau-wrap';
+ 
+// ─────────────────────────────────────────
+// UTILITAIRES
+// ─────────────────────────────────────────
+function addMessage(texte, type = 'bot') {
+  const body = document.getElementById('chat-body');
+  const wrap = document.createElement('div');
+  if (type === 'bot') {
+    wrap.className = 'msg-bot';
     wrap.innerHTML = `
-        <label class="text-sm font-semibold text-gray-700">Niveau :</label>
-        <select id="sel-niveau" class="w-full border rounded-lg px-3 py-2 text-sm">
-            <option value="">-- Niveau --</option>
-            ${niveaux.map(n => `<option value="${n.id}">${n.libelle}</option>`).join('')}
-        </select>
-        <label class="text-sm font-semibold text-gray-700 mt-2 block">Affichage :</label>
-        <div class="flex gap-2 mt-1">
-            <button onclick="afficherJour()" class="flex-1 bg-green-600 text-white text-sm py-1.5 rounded-lg hover:bg-green-700">Par jour</button>
-            <button onclick="afficherSemaine()" class="flex-1 bg-blue-600 text-white text-sm py-1.5 rounded-lg hover:bg-blue-700">Semaine complète</button>
-            <button onclick="telechargerPDF()" class="flex-1 bg-red-600 text-white text-sm py-1.5 rounded-lg hover:bg-red-700">PDF</button>
-        </div>`;
-    sel.appendChild(wrap);
+      <div class="bot-av">
+        <i data-lucide="bot" style="width:15px;height:15px"></i>
+      </div>
+      <div class="bubble-bot">${texte}</div>`;
+  } else {
+    wrap.className = 'msg-user';
+    wrap.innerHTML = `<div class="bubble-user">${texte}</div>`;
+  }
+  body.appendChild(wrap);
+  body.scrollTop = body.scrollHeight;
+  lucide.createIcons();
 }
-
-function afficherJour() {
-    const filiereId = document.getElementById('sel-filiere').value;
-    const niveauId  = document.getElementById('sel-niveau').value;
-    if (!filiereId || !niveauId) { ajouterMessage('Veuillez choisir une filière et un niveau.'); return; }
-
-    const jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
-    const wrap = document.getElementById('sel-niveau-wrap');
-    const existing = document.getElementById('sel-jour-wrap');
-    if (existing) existing.remove();
-
-    const div = document.createElement('div');
-    div.id = 'sel-jour-wrap';
-    div.innerHTML = `
-        <label class="text-sm font-semibold text-gray-700">Jour :</label>
-        <select id="sel-jour" class="w-full border rounded-lg px-3 py-2 text-sm">
-            <option value="">-- Jour --</option>
-            ${jours.map(j => `<option value="${j}">${j}</option>`).join('')}
-        </select>
-        <button onclick="fetchJour(${filiereId}, ${niveauId})" class="mt-2 w-full bg-green-600 text-white text-sm py-2 rounded-lg hover:bg-green-700">Afficher</button>`;
-    document.getElementById('selectors').appendChild(div);
+ 
+function showOptions(options) {
+  const zone = document.getElementById('chat-options');
+  zone.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn' + (opt.style ? ' ' + opt.style : '');
+    btn.innerHTML = (opt.icon ? `<i data-lucide="${opt.icon}" style="width:13px;height:13px"></i>` : '') + opt.label;
+    btn.onclick = opt.action;
+    zone.appendChild(btn);
+  });
+  lucide.createIcons();
 }
-
-async function fetchJour(filiereId, niveauId) {
-    const jour = document.getElementById('sel-jour').value;
-    if (!jour) { ajouterMessage('Veuillez choisir un jour.'); return; }
-
-    const res = await fetch(`${BASE}/edt/jour?filiere_id=${filiereId}&niveau_id=${niveauId}&jour=${jour}`);
-    const cours = await res.json();
-
-    if (!cours.length) { ajouterMessage(`Aucun cours le <strong>${jour}</strong>.`); return; }
-
-    let msg = `<strong>Cours du ${jour} :</strong><br><ul class="list-disc ml-4 mt-1">`;
-    cours.forEach(c => {
-        msg += `<li>${c.heure_debut.slice(0,5)}-${c.heure_fin.slice(0,5)} : ${c.matiere.nom} (${c.enseignant.prenom} ${c.enseignant.nom}) — ${c.salle.nom}</li>`;
+ 
+function showLoader() {
+  const body = document.getElementById('chat-body');
+  const div = document.createElement('div');
+  div.id = 'loader';
+  div.className = 'loader-wrap';
+  div.innerHTML = `
+    <div class="bot-av">
+      <i data-lucide="bot" style="width:15px;height:15px"></i>
+    </div>
+    <div class="loader-bubble">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>`;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+  lucide.createIcons();
+}
+ 
+function hideLoader() {
+  const l = document.getElementById('loader');
+  if (l) l.remove();
+}
+ 
+function fmtHeure(h) { return h ? h.substring(0, 5) : '--:--'; }
+ 
+// ─────────────────────────────────────────
+// TABLEAU EDT
+// ─────────────────────────────────────────
+function afficherTableau(cours) {
+  const body = document.getElementById('chat-body');
+  const wrap = document.createElement('div');
+  wrap.className = 'table-wrapper';
+ 
+  let rows = '';
+  cours.forEach(c => {
+    rows += `<tr>
+      <td>
+        <div class="td-heure">
+          <i data-lucide="clock" style="width:11px;height:11px;color:#1B4FD8"></i>
+          ${fmtHeure(c.heure_debut)}–${fmtHeure(c.heure_fin)}
+        </div>
+      </td>
+      <td class="td-matiere">${c.matiere ? c.matiere.nom : '—'}</td>
+      <td>
+        <div class="td-enseignant">
+          <i data-lucide="user" style="width:11px;height:11px;color:#64748B"></i>
+          ${c.enseignant ? c.enseignant.prenom + ' ' + c.enseignant.nom : '—'}
+        </div>
+      </td>
+      <td>
+        <div class="td-salle">
+          <i data-lucide="door-open" style="width:11px;height:11px"></i>
+          ${c.salle ? c.salle.nom : '—'}
+        </div>
+      </td>
+    </tr>`;
+  });
+ 
+  wrap.innerHTML = `
+    <table class="edt-table">
+      <thead><tr>
+        <th><div class="th-inner"><i data-lucide="clock" style="width:12px;height:12px"></i>Horaire</div></th>
+        <th><div class="th-inner"><i data-lucide="book-open" style="width:12px;height:12px"></i>Matière</div></th>
+        <th><div class="th-inner"><i data-lucide="user" style="width:12px;height:12px"></i>Enseignant</div></th>
+        <th><div class="th-inner"><i data-lucide="map-pin" style="width:12px;height:12px"></i>Salle</div></th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+ 
+  body.appendChild(wrap);
+  body.scrollTop = body.scrollHeight;
+  lucide.createIcons();
+}
+ 
+// ─────────────────────────────────────────
+// ACCUEIL
+// ─────────────────────────────────────────
+function accueil() {
+  selectedFiliereId = selectedFiliereNom = selectedNiveauId =
+  selectedNiveauNom = selectedJour = selectedEnseignant = null;
+  updateBreadcrumb([
+    '<i data-lucide="home" style="width:12px;height:12px"></i> Accueil'
+  ]);
+  showQuickSuggestions([
+    { label: 'edt',     icon: 'calendar' },
+    { label: 'alertes', icon: 'bell' },
+    { label: 'aide',    icon: 'help-circle' },
+  ]);
+  addMessage('Que souhaitez-vous faire ?');
+  showOptionsAccueilRapide();
+}
+ 
+// ─────────────────────────────────────────
+// ÉTAPE 1 — Filières
+// GET /api/filieres → [{ id, nom, code }]
+// ─────────────────────────────────────────
+function chargerFilieres() {
+  updateBreadcrumb([
+    '<i data-lucide="home" style="width:12px;height:12px"></i> Accueil',
+    '<i data-lucide="layers" style="width:12px;height:12px"></i> Filière'
+  ]);
+  showLoader();
+  fetch('/api/filieres')
+    .then(r => r.json())
+    .then(filieres => {
+      hideLoader();
+      addMessage('Choisissez votre filière :');
+      showOptions(filieres.map(f => ({
+        label: f.nom, icon: 'graduation-cap',
+        action: () => choisirFiliere(f.id, f.nom)
+      })));
+    })
+    .catch(() => { hideLoader(); addMessage('❌ Erreur serveur. Vérifiez que php artisan serve est lancé.'); });
+}
+ 
+// ─────────────────────────────────────────
+// ÉTAPE 2 — Niveaux
+// GET /api/niveaux/{id} → [{ id, libelle }]
+// ─────────────────────────────────────────
+function choisirFiliere(id, nom) {
+  selectedFiliereId = id; selectedFiliereNom = nom;
+  addMessage(nom, 'user');
+  updateBreadcrumb([
+    '<i data-lucide="home" style="width:12px;height:12px"></i> Accueil',
+    `<i data-lucide="layers" style="width:12px;height:12px"></i> ${nom}`,
+    '<i data-lucide="hash" style="width:12px;height:12px"></i> Niveau'
+  ]);
+  showLoader();
+  fetch('/api/niveaux/' + id)
+    .then(r => r.json())
+    .then(niveaux => {
+      hideLoader();
+      addMessage('Choisissez votre niveau :');
+      showOptions(niveaux.map(n => ({
+        label: n.libelle, icon: 'hash',
+        action: () => choisirNiveau(n.id, n.libelle)
+      })));
     });
-    msg += '</ul>';
-    ajouterMessage(msg);
 }
-
-async function afficherSemaine() {
-    const filiereId = document.getElementById('sel-filiere').value;
-    const niveauId  = document.getElementById('sel-niveau').value;
-    if (!filiereId || !niveauId) { ajouterMessage('Veuillez choisir une filière et un niveau.'); return; }
-
-    const res = await fetch(`${BASE}/edt/semaine?filiere_id=${filiereId}&niveau_id=${niveauId}`);
-    const planning = await res.json();
-
-    let msg = '<strong>Planning de la semaine :</strong>';
-    for (const [jour, cours] of Object.entries(planning)) {
-        if (!cours.length) continue;
-        msg += `<br><strong>${jour} :</strong><ul class="list-disc ml-4">`;
-        cours.forEach(c => {
-            msg += `<li>${c.heure_debut.slice(0,5)}-${c.heure_fin.slice(0,5)} : ${c.matiere.nom} — ${c.salle.nom}</li>`;
-        });
-        msg += '</ul>';
-    }
-    ajouterMessage(msg);
+ 
+// ─────────────────────────────────────────
+// ÉTAPE 3 — Période
+// ─────────────────────────────────────────
+function choisirNiveau(id, libelle) {
+  selectedNiveauId = id; selectedNiveauNom = libelle;
+  addMessage(libelle, 'user');
+  updateBreadcrumb([
+    '<i data-lucide="home" style="width:12px;height:12px"></i> Accueil',
+    `<i data-lucide="layers" style="width:12px;height:12px"></i> ${selectedFiliereNom}`,
+    `<i data-lucide="hash" style="width:12px;height:12px"></i> ${libelle}`,
+    '<i data-lucide="calendar-days" style="width:12px;height:12px"></i> Période'
+  ]);
+  addMessage('Comment voulez-vous consulter l\'EDT ?');
+  showQuickSuggestions([
+    { label: 'lundi',   icon: 'sun' },
+    { label: 'semaine', icon: 'calendar-range' },
+    { label: 'pdf',     icon: 'download' },
+  ]);
+  showOptions([
+    { label: 'Par jour',    icon: 'calendar-days', action: afficherChoixJour, style: 'primary' },
+    { label: 'Par semaine', icon: 'calendar-range', action: chargerSemaine },
+  ]);
 }
-
-function telechargerPDF() {
-    const filiereId = document.getElementById('sel-filiere').value;
-    const niveauId  = document.getElementById('sel-niveau').value;
-    if (!filiereId || !niveauId) { ajouterMessage('Veuillez choisir une filière et un niveau.'); return; }
-    window.location.href = `${BASE}/pdf?filiere_id=${filiereId}&niveau_id=${niveauId}`;
-    ajouterMessage('Téléchargement du PDF en cours...');
+ 
+// ─────────────────────────────────────────
+// ÉTAPE 4a — Choix du jour
+// ─────────────────────────────────────────
+function afficherChoixJour() {
+  addMessage('Choisissez le jour :');
+  showOptions(['Lundi','Mardi','Mercredi','Jeudi','Vendredi'].map(j => ({
+    label: j, icon: 'sun', action: () => chargerJour(j)
+  })));
 }
-
-async function voirEnseignants() {
-    viderSelectors();
-    const res = await fetch(`${BASE}/enseignants`);
-    const enseignants = await res.json();
-
-    let html = '<label class="text-sm font-semibold text-gray-700">Choisissez un enseignant :</label>';
-    html += '<select id="sel-ens" class="w-full border rounded-lg px-3 py-2 text-sm">';
-    html += '<option value="">-- Enseignant --</option>';
-    enseignants.forEach(e => { html += `<option value="${e.id}">${e.prenom} ${e.nom}</option>`; });
-    html += '</select>';
-    html += `<button onclick="fetchEnseignant()" class="mt-2 w-full bg-blue-600 text-white text-sm py-2 rounded-lg hover:bg-blue-700">Voir planning</button>`;
-    document.getElementById('selectors').innerHTML = html;
+ 
+// ─────────────────────────────────────────
+// ÉTAPE 5a — EDT d'un jour
+// GET /api/edt/jour?filiere_id=&niveau_id=&jour=
+// ─────────────────────────────────────────
+function chargerJour(jour) {
+  selectedJour = jour;
+  addMessage(jour, 'user');
+  showLoader();
+  const params = new URLSearchParams({ filiere_id: selectedFiliereId, niveau_id: selectedNiveauId, jour });
+  fetch('/api/edt/jour?' + params)
+    .then(r => r.json())
+    .then(cours => {
+      hideLoader();
+      if (!Array.isArray(cours) || cours.length === 0) {
+        const div = document.createElement('div');
+        div.className = 'empty-msg';
+        div.innerHTML = `<i data-lucide="moon" style="width:28px;height:28px"></i><span>Aucun cours prévu ce <strong>${jour}</strong>.</span>`;
+        document.getElementById('chat-body').appendChild(div);
+        lucide.createIcons();
+      } else {
+        addMessage(`EDT du <strong>${jour}</strong> — ${selectedFiliereNom} ${selectedNiveauNom} :`);
+        afficherTableau(cours);
+      }
+      showOptions([
+        { label: 'Télécharger PDF', icon: 'download',  action: () => telechargerPDF(jour), style: 'success' },
+        { label: 'Retour accueil',  icon: 'home',      action: accueil,                    style: 'danger'  },
+      ]);
+    })
+    .catch(() => { hideLoader(); addMessage('❌ Erreur lors du chargement.'); });
 }
-
-async function fetchEnseignant() {
-    const eid = document.getElementById('sel-ens').value;
-    if (!eid) { ajouterMessage('Veuillez choisir un enseignant.'); return; }
-
-    const res = await fetch(`${BASE}/edt/enseignant?enseignant_id=${eid}`);
-    const planning = await res.json();
-
-    let msg = '<strong>Planning de l\'enseignant :</strong>';
-    let vide = true;
-    for (const [jour, cours] of Object.entries(planning)) {
-        if (!cours.length) continue;
-        vide = false;
-        msg += `<br><strong>${jour} :</strong><ul class="list-disc ml-4">`;
-        cours.forEach(c => {
-            msg += `<li>${c.heure_debut.slice(0,5)}-${c.heure_fin.slice(0,5)} : ${c.matiere.nom} (${c.filiere.code} ${c.niveau.libelle}) — ${c.salle.nom}</li>`;
-        });
-        msg += '</ul>';
-    }
-    if (vide) msg = 'Aucun cours trouvé pour cet enseignant.';
-    ajouterMessage(msg);
-}
-
-async function voirAlertes() {
-    viderSelectors();
-    const res = await fetch(`${BASE}/alertes`);
-    const alertes = await res.json();
-
-    if (!alertes.length) {
-        ajouterMessage('Aucune modification dans les dernières 48h.');
-        return;
-    }
-
-    let msg = '<strong>Modifications récentes (48h) :</strong><ul class="list-disc ml-4 mt-1">';
-    alertes.forEach(a => {
-        const matiere = a.emploi?.matiere?.nom ?? 'Cours';
-        msg += `<li><strong>${matiere}</strong> : ${a.ancien_jour} ${a.ancienne_heure?.slice(0,5) ?? ''} → ${a.nouveau_jour} ${a.nouvelle_heure?.slice(0,5) ?? ''}</li>`;
-        if (a.motif) msg += `<li class="ml-4 text-gray-500 list-none">Motif : ${a.motif}</li>`;
+ 
+// ─────────────────────────────────────────
+// ÉTAPE 4b — EDT semaine complète
+// GET /api/edt/semaine?filiere_id=&niveau_id=
+// ─────────────────────────────────────────
+function chargerSemaine() {
+  addMessage('Semaine complète', 'user');
+  showLoader();
+  const params = new URLSearchParams({ filiere_id: selectedFiliereId, niveau_id: selectedNiveauId });
+  fetch('/api/edt/semaine?' + params)
+    .then(r => r.json())
+    .then(data => {
+      hideLoader();
+      addMessage(`EDT semaine — ${selectedFiliereNom} ${selectedNiveauNom} :`);
+      const jours = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi'];
+      let total = 0;
+      jours.forEach(jour => {
+        if (data[jour] && data[jour].length > 0) {
+          total += data[jour].length;
+          const body = document.getElementById('chat-body');
+          const lbl = document.createElement('div');
+          lbl.className = 'day-label';
+          lbl.textContent = jour;
+          body.appendChild(lbl);
+          afficherTableau(data[jour]);
+        }
+      });
+      if (total === 0) {
+        const div = document.createElement('div');
+        div.className = 'empty-msg';
+        div.innerHTML = `<i data-lucide="moon" style="width:28px;height:28px"></i><span>Aucun cours cette semaine.</span>`;
+        document.getElementById('chat-body').appendChild(div);
+        lucide.createIcons();
+      }
+      showOptions([
+        { label: 'Télécharger PDF', icon: 'download', action: () => telechargerPDF(), style: 'success' },
+        { label: 'Retour accueil',  icon: 'home',     action: accueil,                style: 'danger'  },
+      ]);
     });
-    msg += '</ul>';
-    ajouterMessage(msg);
 }
+ 
+// ─────────────────────────────────────────
+// ALERTES
+// GET /api/alertes → [{ ancien_jour, ancienne_heure, nouveau_jour, nouvelle_heure, motif, emploi_du_temps }]
+// ─────────────────────────────────────────
+function chargerAlertes() {
+  addMessage('Alertes modifications', 'user');
+  updateBreadcrumb([
+    '<i data-lucide="home" style="width:12px;height:12px"></i> Accueil',
+    '<i data-lucide="bell" style="width:12px;height:12px"></i> Alertes'
+  ]);
+  showLoader();
+  fetch('/api/alertes')
+    .then(r => r.json())
+    .then(alertes => {
+      hideLoader();
+      if (!alertes.length) {
+        addMessage('✅ Aucune modification dans les 48 dernières heures.');
+      } else {
+        addMessage(`${alertes.length} modification(s) récente(s) :`);
+        const body = document.getElementById('chat-body');
+        alertes.forEach(a => {
+          const card = document.createElement('div');
+          card.className = 'alert-card';
+          const mat = a.emploi_du_temps?.matiere?.nom || 'Cours';
+          const fil = a.emploi_du_temps?.filiere?.nom || '';
+          card.innerHTML = `
+            <div class="ac-title">
+              <i data-lucide="alert-triangle" style="width:14px;height:14px;color:#F59E0B"></i>
+              ${mat} ${fil ? '— ' + fil : ''}
+            </div>
+            <div class="ac-body">
+              <span class="ac-tag">${a.ancien_jour} ${fmtHeure(a.ancienne_heure)}</span>
+              <i data-lucide="arrow-right" class="ac-arrow" style="width:14px;height:14px"></i>
+              <span class="ac-tag">${a.nouveau_jour} ${fmtHeure(a.nouvelle_heure)}</span>
+            </div>
+            ${a.motif ? `<div class="ac-motif"><i data-lucide="message-circle" style="width:12px;height:12px"></i>${a.motif}</div>` : ''}
+          `;
+          body.appendChild(card);
+          body.scrollTop = body.scrollHeight;
+        });
+        lucide.createIcons();
+      }
+      showOptions([{ label: 'Retour accueil', icon: 'home', action: accueil, style: 'primary' }]);
+    });
+}
+ 
+// ─────────────────────────────────────────
+// ENSEIGNANTS
+// GET /api/enseignants → [{ id, nom, prenom }]
+// ─────────────────────────────────────────
+function chargerEnseignants() {
+  addMessage('Vue Enseignant', 'user');
+  updateBreadcrumb([
+    '<i data-lucide="home" style="width:12px;height:12px"></i> Accueil',
+    '<i data-lucide="user-check" style="width:12px;height:12px"></i> Enseignant'
+  ]);
+  showLoader();
+  fetch('/api/enseignants')
+    .then(r => r.json())
+    .then(list => {
+      hideLoader();
+      addMessage('Choisissez un enseignant :');
+      showOptions(list.map(e => ({
+        label: e.prenom + ' ' + e.nom, icon: 'user',
+        action: () => chargerPlanningEnseignant(e.id, e.prenom + ' ' + e.nom)
+      })));
+    });
+}
+ 
+// ─────────────────────────────────────────
+// PLANNING ENSEIGNANT
+// GET /api/edt/enseignant?enseignant_id=
+// ─────────────────────────────────────────
+function chargerPlanningEnseignant(id, nom) {
+  selectedEnseignant = id;
+  addMessage(nom, 'user');
+  showLoader();
+  fetch('/api/edt/enseignant?' + new URLSearchParams({ enseignant_id: id }))
+    .then(r => r.json())
+    .then(cours => {
+      hideLoader();
+      if (!cours.length) {
+        addMessage(`Aucun cours cette semaine pour ${nom}.`);
+      } else {
+        addMessage(`Planning de <strong>${nom}</strong> :`);
+        const body = document.getElementById('chat-body');
+        const wrap = document.createElement('div');
+        wrap.className = 'table-wrapper';
+        let rows = '';
+        cours.forEach(c => {
+          rows += `<tr>
+            <td><div class="td-heure">
+              <i data-lucide="clock" style="width:11px;height:11px;color:#1B4FD8"></i>
+              ${fmtHeure(c.heure_debut)}–${fmtHeure(c.heure_fin)}
+            </div></td>
+            <td style="font-weight:700;color:#1B4FD8">
+              <div style="display:flex;align-items:center;gap:4px">
+                <i data-lucide="sun" style="width:11px;height:11px"></i>${c.jour}
+              </div>
+            </td>
+            <td class="td-matiere">${c.matiere?.nom || '—'}</td>
+            <td>${c.filiere?.code || '—'} ${c.niveau?.libelle || ''}</td>
+            <td><div class="td-salle">
+              <i data-lucide="door-open" style="width:11px;height:11px"></i>${c.salle?.nom || '—'}
+            </div></td>
+          </tr>`;
+        });
+        wrap.innerHTML = `
+          <table class="edt-table">
+            <thead><tr>
+              <th><div class="th-inner"><i data-lucide="clock" style="width:12px;height:12px"></i>Horaire</div></th>
+              <th><div class="th-inner"><i data-lucide="sun" style="width:12px;height:12px"></i>Jour</div></th>
+              <th><div class="th-inner"><i data-lucide="book-open" style="width:12px;height:12px"></i>Matière</div></th>
+              <th><div class="th-inner"><i data-lucide="users" style="width:12px;height:12px"></i>Groupe</div></th>
+              <th><div class="th-inner"><i data-lucide="map-pin" style="width:12px;height:12px"></i>Salle</div></th>
+            </tr></thead>
+            <tbody>${rows}</tbody>
+          </table>`;
+        body.appendChild(wrap);
+        body.scrollTop = body.scrollHeight;
+        lucide.createIcons();
+      }
+      showOptions([
+        { label: 'Télécharger PDF', icon: 'download', action: () => window.open('/api/pdf?enseignant_id=' + id, '_blank'), style: 'success' },
+        { label: 'Retour accueil',  icon: 'home',     action: accueil, style: 'danger' },
+      ]);
+    });
+}
+ 
+// ─────────────────────────────────────────
+// PDF — téléchargement
+// GET /api/pdf?filiere_id=&niveau_id=&jour=
+// ─────────────────────────────────────────
+function telechargerPDF(jour = null) {
+  const params = new URLSearchParams({ filiere_id: selectedFiliereId, niveau_id: selectedNiveauId });
+  if (jour) params.append('jour', jour);
+  window.open('/api/pdf?' + params, '_blank');
+  addMessage('⬇️ PDF en cours de téléchargement...');
+}
+ 
+// ─────────────────────────────────────────
+// SUGGESTIONS RAPIDES — affichées au-dessus
+// du champ de saisie selon le contexte
+// ─────────────────────────────────────────
+function showQuickSuggestions(tags) {
+  const zone = document.getElementById('quick-suggestions');
+  zone.innerHTML = '';
+  tags.forEach(t => {
+    const el = document.createElement('div');
+    el.className = 'quick-tag';
+    el.innerHTML = `<i data-lucide="${t.icon}" style="width:11px;height:11px"></i>${t.label}`;
+    el.onclick = () => {
+      document.getElementById('chat-input').value = t.label;
+      envoyerMessage();
+    };
+    zone.appendChild(el);
+  });
+  lucide.createIcons();
+}
+ 
+// ─────────────────────────────────────────
+// SAISIE LIBRE — détection de mots-clés
+// Pas d'IA : on cherche des mots connus dans
+// le texte tapé et on déclenche l'action liée.
+// ─────────────────────────────────────────
+function envoyerMessage() {
+  const input = document.getElementById('chat-input');
+  const texte = input.value.trim();
+  if (!texte) return;
+ 
+  addMessage(texte, 'user');
+  input.value = '';
+  showLoader();
+ 
+  // Petit délai pour donner un effet "réflexion"
+  setTimeout(() => traiterMessage(texte.toLowerCase()), 450);
+}
+ 
+function traiterMessage(msg) {
+  hideLoader();
+ 
+  // ── Salutations ──
+  if (/^(salut|bonjour|bonsoir|hello|coucou|slt)\b/.test(msg)) {
+    addMessage('Bonjour 👋 ! Que puis-je faire pour vous ?');
+    return showOptionsAccueilRapide();
+  }
+ 
+  // ── Aide ──
+  if (msg.includes('aide') || msg.includes('help') || msg.includes('menu')) {
+    addMessage('Voici ce que je peux faire pour vous :');
+    return showOptionsAccueilRapide();
+  }
+ 
+  // ── Emploi du temps / cours ──
+  if (msg.includes('edt') || msg.includes('emploi') || msg.includes('cours') || msg.includes('planning') || msg.includes('horaire')) {
+    addMessage('Très bien, consultons votre emploi du temps 📅');
+    return chargerFilieres();
+  }
+ 
+  // ── Alertes / modifications ──
+  if (msg.includes('alerte') || msg.includes('modif') || msg.includes('changement')) {
+    addMessage('Je vérifie les dernières modifications 🔔');
+    return chargerAlertes();
+  }
+ 
+  // ── Enseignant ──
+  if (msg.includes('enseignant') || msg.includes('professeur') || msg.includes('prof')) {
+    addMessage('Voyons les enseignants disponibles 👨‍🏫');
+    return chargerEnseignants();
+  }
+ 
+  // ── Jours de la semaine — uniquement si filière/niveau déjà choisis ──
+  const jours = { lundi:'Lundi', mardi:'Mardi', mercredi:'Mercredi', jeudi:'Jeudi', vendredi:'Vendredi' };
+  for (const [key, jour] of Object.entries(jours)) {
+    if (msg.includes(key)) {
+      if (selectedFiliereId && selectedNiveauId) {
+        addMessage(`D'accord, voici votre ${jour} :`);
+        return chargerJour(jour);
+      } else {
+        addMessage(`Pour voir le ${jour}, choisissez d'abord votre filière et votre niveau :`);
+        return chargerFilieres();
+      }
+    }
+  }
+ 
+  // ── Semaine complète ──
+  if (msg.includes('semaine')) {
+    if (selectedFiliereId && selectedNiveauId) {
+      addMessage('Voici votre semaine complète :');
+      return chargerSemaine();
+    } else {
+      addMessage('Choisissez d\'abord votre filière et votre niveau :');
+      return chargerFilieres();
+    }
+  }
+ 
+  // ── PDF ──
+  if (msg.includes('pdf') || msg.includes('télécharg') || msg.includes('telecharg')) {
+    if (selectedFiliereId && selectedNiveauId) {
+      return telechargerPDF(selectedJour);
+    } else {
+      addMessage('Choisissez d\'abord un emploi du temps à télécharger :');
+      return chargerFilieres();
+    }
+  }
+ 
+  // ── Niveaux tapés manuellement (L1, L2, L3, etc.)
+  const niveauMatch = msg.match(/\b(l[0-9]+)\b/);
+  if (niveauMatch) {
+    const niveauLabel = niveauMatch[1].toUpperCase().trim();
+    if (!selectedFiliereId) {
+      addMessage('Pour choisir un niveau, commencez par sélectionner votre filière.');
+      return chargerFilieres();
+    }
+    addMessage(`D'accord, je cherche le niveau ${niveauLabel}...`);
+    showLoader();
+    return fetch('/api/niveaux/' + selectedFiliereId)
+      .then(r => r.json())
+      .then(niveaux => {
+        hideLoader();
+        const normalizedLabel = label => String(label || '').toUpperCase().replace(/\s+/g, '');
+        const niveau = niveaux.find(n => normalizedLabel(n.libelle) === normalizedLabel(niveauLabel))
+          || niveaux.find(n => normalizedLabel(n.libelle).includes(normalizedLabel(niveauLabel)));
+        if (!niveau) {
+          addMessage(`Je n'ai pas trouvé le niveau ${niveauLabel} pour cette filière. Choisissez un niveau parmi les options.`);
+          return chargerFilieres();
+        }
+        return choisirNiveau(niveau.id, niveau.libelle);
+      })
+      .catch(() => {
+        hideLoader();
+        addMessage('❌ Erreur serveur. Impossible de récupérer les niveaux.');
+      });
+  }
+ 
+  // ── Accueil / retour ──
+  if (msg.includes('accueil') || msg.includes('retour') || msg.includes('recommenc')) {
+    addMessage('Retour à l\'accueil 🏠');
+    return accueil();
+  }
+ 
+  // ── Merci / au revoir ──
+  if (/(merci|au revoir|bye|à bientôt)/.test(msg)) {
+    addMessage('Avec plaisir 😊 ! N\'hésitez pas si vous avez besoin d\'autre chose.');
+    return showOptionsAccueilRapide();
+  }
+ 
+  // ── Rien compris ──
+  addMessage('Je n\'ai pas bien compris 🤔. Voici ce que je peux faire :');
+  showOptionsAccueilRapide();
+}
+ 
+// Affiche les options principales sans réinitialiser le contexte
+function showOptionsAccueilRapide() {
+  showOptions([
+    { label: 'Voir mon EDT',          icon: 'calendar',   action: chargerFilieres,   style: 'primary' },
+    { label: 'Alertes modifications', icon: 'bell',       action: chargerAlertes                      },
+    { label: 'Je suis Enseignant',    icon: 'user-check', action: chargerEnseignants                  },
+  ]);
+}
+ 
+// ─────────────────────────────────────────
+// ÉVÉNEMENTS — champ de saisie
+// ─────────────────────────────────────────
+document.getElementById('chat-send').addEventListener('click', envoyerMessage);
+document.getElementById('chat-input').addEventListener('keypress', e => {
+  if (e.key === 'Enter') envoyerMessage();
+});
+ 
+// ─────────────────────────────────────────
+// DÉMARRAGE
+// ─────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  lucide.createIcons();
+  showQuickSuggestions([
+    { label: 'edt',     icon: 'calendar' },
+    { label: 'alertes', icon: 'bell' },
+    { label: 'aide',    icon: 'help-circle' },
+  ]);
+  addMessage('Bonjour 👋 Je suis votre assistant emploi du temps de l\'UGANC.');
+  setTimeout(() => {
+    addMessage('Je peux vous aider à consulter vos cours, voir les modifications récentes ou afficher le planning d\'un enseignant.');
+    setTimeout(() => {
+      addMessage('Comment puis-je vous aider ? Vous pouvez cliquer sur un bouton ou m\'écrire directement (ex : "edt", "alertes", "lundi"...)');
+      showOptionsAccueilRapide();
+    }, 500);
+  }, 400);
+});
 </script>
 </body>
 </html>
