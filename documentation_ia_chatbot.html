@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="Generator" content="Microsoft Word">
+<style>
+  @page {
+    size: A4;
+    margin: 2.5cm 2.8cm 2.5cm 2.8cm;
+  }
+  body {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 12pt;
+    color: #000;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+  }
+  /* COUVERTURE */
+  .cover {
+    text-align: center;
+    padding: 80px 0 60px;
+    page-break-after: always;
+    border-bottom: 3px solid #1B4FD8;
+  }
+  .cover .logo-text {
+    font-size: 36pt;
+    font-weight: bold;
+    color: #1B4FD8;
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+  }
+  .cover .logo-sub {
+    font-size: 12pt;
+    color: #555;
+    margin-bottom: 50px;
+  }
+  .cover h1 {
+    font-size: 22pt;
+    color: #0D1B2A;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .cover h2 {
+    font-size: 15pt;
+    color: #1B4FD8;
+    font-weight: normal;
+    margin-bottom: 50px;
+  }
+  .cover .meta-table {
+    margin: 0 auto;
+    width: 70%;
+    border-collapse: collapse;
+    font-size: 11pt;
+  }
+  .cover .meta-table td {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+  }
+  .cover .meta-table td:first-child {
+    background: #1B4FD8;
+    color: #fff;
+    font-weight: bold;
+    width: 40%;
+  }
+
+  /* STYLES COMMUNS */
+  h1 {
+    font-size: 16pt;
+    color: #1B4FD8;
+    font-weight: bold;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #1B4FD8;
+    padding-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  h2 {
+    font-size: 13pt;
+    color: #0D1B2A;
+    font-weight: bold;
+    margin-top: 22px;
+    margin-bottom: 8px;
+  }
+  h3 {
+    font-size: 11.5pt;
+    color: #1B4FD8;
+    font-weight: bold;
+    margin-top: 16px;
+    margin-bottom: 6px;
+  }
+  p {
+    text-align: justify;
+    margin: 6px 0 10px;
+  }
+  ul, ol {
+    margin: 6px 0 10px 22px;
+  }
+  li {
+    margin-bottom: 5px;
+  }
+  /* ENCADRÉS */
+  .box {
+    background: #EFF6FF;
+    border-left: 5px solid #1B4FD8;
+    padding: 12px 16px;
+    margin: 14px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 11pt;
+  }
+  .box-green {
+    background: #ECFDF5;
+    border-left: 5px solid #10B981;
+    padding: 12px 16px;
+    margin: 14px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .box-orange {
+    background: #FFFBEB;
+    border-left: 5px solid #F59E0B;
+    padding: 12px 16px;
+    margin: 14px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  .box-red {
+    background: #FEF2F2;
+    border-left: 5px solid #EF4444;
+    padding: 12px 16px;
+    margin: 14px 0;
+    border-radius: 0 6px 6px 0;
+  }
+  /* CODE */
+  pre {
+    background: #0D1B2A;
+    color: #E2E8F0;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 9.5pt;
+    font-family: 'Courier New', monospace;
+    overflow-x: auto;
+    margin: 12px 0;
+    line-height: 1.5;
+  }
+  code {
+    background: #F1F5F9;
+    color: #1B4FD8;
+    font-family: 'Courier New', monospace;
+    font-size: 10pt;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+  /* TABLEAUX */
+  table.doc-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 11pt;
+  }
+  table.doc-table th {
+    background: #1B4FD8;
+    color: #fff;
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: bold;
+  }
+  table.doc-table td {
+    padding: 7px 12px;
+    border-bottom: 1px solid #E2E8F0;
+  }
+  table.doc-table tr:nth-child(even) td {
+    background: #F8FAFF;
+  }
+  /* SCHEMA */
+  .schema {
+    background: #F8FAFF;
+    border: 2px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 16px 0;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    font-size: 10pt;
+    color: #334155;
+    line-height: 2;
+  }
+  /* NUMÉRO DE PAGE */
+  .page-break { page-break-before: always; }
+  .section-num {
+    display: inline-block;
+    background: #1B4FD8;
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 24px;
+    font-size: 10pt;
+    font-weight: bold;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .highlight { color: #1B4FD8; font-weight: bold; }
+  .tag {
+    display: inline-block;
+    background: #1B4FD8;
+    color: #fff;
+    font-size: 9pt;
+    padding: 2px 8px;
+    border-radius: 50px;
+    margin: 2px;
+  }
+  .tag-green {
+    display: inline-block;
+    background: #10B981;
+    color: #fff;
+    font-size: 9pt;
+    padding: 2px 8px;
+    border-radius: 50px;
+    margin: 2px;
+  }
+  .tag-orange {
+    display: inline-block;
+    background: #F59E0B;
+    color: #fff;
+    font-size: 9pt;
+    padding: 2px 8px;
+    border-radius: 50px;
+    margin: 2px;
+  }
+  hr {
+    border: none;
+    border-top: 1px solid #E2E8F0;
+    margin: 20px 0;
+  }
+  .toc-entry {
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0;
+    font-size: 11pt;
+  }
+  .toc-dots {
+    flex: 1;
+    border-bottom: 1px dotted #aaa;
+    margin: 0 8px;
+    margin-bottom: 4px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     PAGE DE COUVERTURE
+═══════════════════════════════════════ -->
+<div class="cover">
+  <div class="logo-text">UGANC</div>
+  <div class="logo-sub">Université Gamal Abdel Nasser de Conakry</div>
+
+  <h1>Documentation Technique</h1>
+  <h2>Intelligence Artificielle du Chatbot EDT<br>Architecture, Implémentation &amp; Fonctionnement</h2>
+
+  <table class="meta-table">
+    <tr><td>Projet</td><td>Chatbot Emploi du Temps — Groupe 6</td></tr>
+    <tr><td>Module</td><td>Centre Informatique / Développement Web</td></tr>
+    <tr><td>Technologie principale</td><td>Laravel 10 + API Groq (LLaMA 3.1)</td></tr>
+    <tr><td>Année académique</td><td>2025 – 2026</td></tr>
+    <tr><td>Date du document</td><td>Juin 2026</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TABLE DES MATIÈRES
+═══════════════════════════════════════ -->
+<h1>Table des matières</h1>
+
+<div class="toc-entry"><span>1. Présentation du projet</span><div class="toc-dots"></div><span>3</span></div>
+<div class="toc-entry"><span>2. Problématique : pourquoi intégrer une IA ?</span><div class="toc-dots"></div><span>3</span></div>
+<div class="toc-entry"><span>3. Choix du modèle de langage (LLM)</span><div class="toc-dots"></div><span>4</span></div>
+<div class="toc-entry"><span>4. Architecture globale du système IA</span><div class="toc-dots"></div><span>5</span></div>
+<div class="toc-entry"><span>5. Le contrôleur IA : ChatbotAIController</span><div class="toc-dots"></div><span>6</span></div>
+<div class="toc-entry"><span>6. Accès complet à la base de données</span><div class="toc-dots"></div><span>7</span></div>
+<div class="toc-entry"><span>7. Le prompt système : cerveau de l'IA</span><div class="toc-dots"></div><span>8</span></div>
+<div class="toc-entry"><span>8. Optimisation des tokens</span><div class="toc-dots"></div><span>10</span></div>
+<div class="toc-entry"><span>9. Recherche web en temps réel (Tavily)</span><div class="toc-dots"></div><span>11</span></div>
+<div class="toc-entry"><span>10. Système d'actions IA → Interface</span><div class="toc-dots"></div><span>12</span></div>
+<div class="toc-entry"><span>11. Historique de conversation</span><div class="toc-dots"></div><span>13</span></div>
+<div class="toc-entry"><span>12. Notifications en temps réel</span><div class="toc-dots"></div><span>14</span></div>
+<div class="toc-entry"><span>13. Progression d'année académique</span><div class="toc-dots"></div><span>15</span></div>
+<div class="toc-entry"><span>14. Problèmes rencontrés et solutions</span><div class="toc-dots"></div><span>16</span></div>
+<div class="toc-entry"><span>15. Conclusion</span><div class="toc-dots"></div><span>17</span></div>
+
+<!-- ═══════════════════════════════════════
+     SECTION 1
+═══════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1><span class="section-num">1</span> Présentation du projet</h1>
+
+<p>Le <strong>Chatbot EDT de l'UGANC</strong> est une application web développée avec <strong>Laravel 10</strong> (PHP) permettant à l'ensemble de la communauté universitaire — étudiants, enseignants et chefs de programme — de consulter, gérer et recevoir des alertes sur l'emploi du temps de l'université.</p>
+
+<p>L'application couvre trois rôles distincts :</p>
+<ul>
+  <li><strong>Chef de programme</strong> : administre l'emploi du temps de son département, publie des annonces et fait progresser les étudiants d'une année à l'autre.</li>
+  <li><strong>Professeur (prof)</strong> : consulte ses cours assignés et signale les modifications d'horaires.</li>
+  <li><strong>Étudiant</strong> : consulte son emploi du temps, reçoit des alertes de modification et des notifications en temps réel.</li>
+</ul>
+
+<div class="box">
+  <strong>Périmètre technique :</strong> Laravel 10 · MySQL · API Groq (LLaMA 3.1) · API Tavily (recherche web) · JavaScript natif · Blade Templates · Bootstrap / CSS personnalisé.
+</div>
+
+<!-- ═══════════════════════════════════════
+     SECTION 2
+═══════════════════════════════════════ -->
+<h1><span class="section-num">2</span> Problématique : pourquoi intégrer une IA ?</h1>
+
+<p>Sans intelligence artificielle, l'application est fonctionnelle mais rigide : l'utilisateur doit naviguer manuellement dans des menus pour trouver une information. L'objectif était de rendre l'application conversationnelle, c'est-à-dire capable de :</p>
+
+<ul>
+  <li>Répondre en langage naturel (français ou anglais) aux questions des utilisateurs ;</li>
+  <li>Accéder en temps réel à toutes les données de la base de données ;</li>
+  <li>Déclencher automatiquement les vues de l'interface (tableaux, alertes, PDF) selon la question posée ;</li>
+  <li>Répondre aux questions générales sur les universités, la Guinée et le monde entier ;</li>
+  <li>Effectuer des recherches sur internet pour des informations récentes.</li>
+</ul>
+
+<div class="box-orange">
+  <strong>Exemple concret :</strong> Au lieu de cliquer sur « Filière → Niveau → Lundi », l'utilisateur écrit simplement <em>« Qui donne cours lundi matin ? »</em> et l'IA affiche automatiquement le tableau de l'EDT du lundi.
+</div>
+
+<!-- ═══════════════════════════════════════
+     SECTION 3
+═══════════════════════════════════════ -->
+<h1><span class="section-num">3</span> Choix du modèle de langage (LLM)</h1>
+
+<h2>3.1 Analyse des options disponibles</h2>
+
+<p>Plusieurs options ont été évaluées avant de choisir la solution finale :</p>
+
+<table class="doc-table">
+  <thead>
+    <tr>
+      <th>Solution</th>
+      <th>Avantages</th>
+      <th>Inconvénients</th>
+      <th>Verdict</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Google Gemini</strong></td>
+      <td>Gratuit, API simple</td>
+      <td>Quota = 0 sur le compte testé, clé invalide</td>
+      <td>❌ Abandonné</td>
+    </tr>
+    <tr>
+      <td><strong>OpenAI GPT-4</strong></td>
+      <td>Très performant</td>
+      <td>Payant, pas accessible sans carte</td>
+      <td>❌ Impossible</td>
+    </tr>
+    <tr>
+      <td><strong>Ollama (local)</strong></td>
+      <td>Totalement gratuit</td>
+      <td>Nécessite un serveur puissant</td>
+      <td>❌ Infrastructure indisponible</td>
+    </tr>
+    <tr>
+      <td><strong>Groq API</strong></td>
+      <td>Gratuit, très rapide, compatible OpenAI</td>
+      <td>Limite de tokens par minute (6 000 TPM)</td>
+      <td>✅ <strong>Retenu</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>3.2 Pourquoi Groq ?</h2>
+
+<p><strong>Groq</strong> est une plateforme cloud qui héberge des modèles de langage open-source et les exécute sur des puces spécialisées (<em>Language Processing Units</em>), ce qui les rend extrêmement rapides. L'offre gratuite permet :</p>
+
+<ul>
+  <li><strong>14 400 requêtes par jour</strong> (largement suffisant pour un usage académique) ;</li>
+  <li><strong>6 000 tokens par minute</strong> (limite principale à gérer) ;</li>
+  <li>Une API au <strong>format identique à OpenAI</strong> (facilité d'intégration) ;</li>
+  <li>Le modèle <strong>LLaMA 3.1 8B Instant</strong> : rapide, multilingue, performant.</li>
+</ul>
+
+<div class="box-green">
+  <strong>Modèle utilisé :</strong> <code>llama-3.1-8b-instant</code><br>
+  Développé par Meta (Facebook AI Research), entraîné sur des milliards de textes multilingues, capable de comprendre le français, l'anglais et de raisonner sur des données structurées.
+</div>
+
+<!-- ═══════════════════════════════════════
+     SECTION 4
+═══════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1><span class="section-num">4</span> Architecture globale du système IA</h1>
+
+<p>Le système IA est composé de plusieurs couches qui collaborent à chaque requête :</p>
+
+<div class="schema">
+┌─────────────────────────────────────────────────────────┐
+│                  NAVIGATEUR (Frontend)                  │
+│   - Saisie utilisateur                                  │
+│   - Historique de conversation (10 derniers échanges)   │
+│   - Exécution des actions retournées par l'IA           │
+└───────────────────┬─────────────────────────────────────┘
+                    │  POST /api/chatbot/ai
+                    ▼
+┌─────────────────────────────────────────────────────────┐
+│          ChatbotAIController.php (Laravel)               │
+│                                                          │
+│  1. Récupère le message + historique + identifiants     │
+│  2. Interroge la BASE DE DONNÉES (EDT, profs, etc.)     │
+│  3. Vérifie si une RECHERCHE WEB est nécessaire         │
+│  4. Construit le PROMPT SYSTÈME avec toutes les données │
+│  5. Envoie à l'API GROQ                                 │
+│  6. Retourne JSON { message, action, params }           │
+└────────┬──────────────────────────────┬─────────────────┘
+         │                              │
+         ▼                              ▼
+┌────────────────┐           ┌──────────────────────┐
+│   BASE MySQL   │           │   API GROQ (LLaMA)   │
+│  - EDT         │           │  llama-3.1-8b-instant│
+│  - Enseignants │           │  Conakry, Guinée...  │
+│  - Étudiants   │           └──────────────────────┘
+│  - Filières    │
+│  - Annonces    │           ┌──────────────────────┐
+│  - Notifs      │           │   API TAVILY         │
+└────────────────┘           │  (recherche web)     │
+                             └──────────────────────┘
+</div>
+
+<p>Ce flux se déroule en <strong>moins de 2 secondes</strong> pour les questions sur l'application et en <strong>moins de 4 secondes</strong> avec recherche web.</p>
+
+<!-- ═══════════════════════════════════════
+     SECTION 5
+═══════════════════════════════════════ -->
+<h1><span class="section-num">5</span> Le contrôleur IA : ChatbotAIController</h1>
+
+<h2>5.1 Fichier et rôle</h2>
+
+<p>Tout le cerveau de l'IA est centralisé dans un seul fichier Laravel :</p>
+<p><code>app/Http/Controllers/ChatbotAIController.php</code></p>
+
+<p>Ce contrôleur est appelé via la route <code>POST /api/chatbot/ai</code> et orchestre toutes les opérations.</p>
+
+<h2>5.2 Méthode principale : <code>ask()</code></h2>
+
+<p>La méthode <code>ask()</code> reçoit la requête HTTP et effectue les étapes suivantes dans l'ordre :</p>
+
+<ol>
+  <li><strong>Récupération des paramètres</strong> : message de l'utilisateur, historique de conversation, identifiants de filière, niveau et enseignant.</li>
+  <li><strong>Identification de l'utilisateur connecté</strong> : si un utilisateur est authentifié, ses données (filière, niveau, rôle) sont automatiquement utilisées.</li>
+  <li><strong>Collecte des données en base</strong> : 8 appels à la base de données en parallèle (EDT, alertes, annonces, filières, niveaux, statistiques, enseignants, étudiants, chefs).</li>
+  <li><strong>Décision de recherche web</strong> : si la question ne concerne pas l'application, une recherche Tavily est lancée.</li>
+  <li><strong>Construction du prompt système</strong> : toutes les données sont intégrées dans un texte d'instruction structuré.</li>
+  <li><strong>Appel à l'API Groq</strong> : envoi du prompt + historique + question au modèle LLaMA.</li>
+  <li><strong>Retour JSON</strong> : <code>{ "message": "...", "action": "...", "params": {...} }</code>.</li>
+</ol>
+
+<pre>// Extrait simplifié de la méthode ask()
+public function ask(Request $request)
+{
+    $message   = $request->input('message');
+    $history   = $request->input('history', []);
+    $filiereId = $request->input('filiere_id');
+
+    // 1. Collecte des données de la BD
+    $edt         = $this->fetchEdt($filiereId, $niveauId, $enseignantId);
+    $enseignants = $this->fetchEnseignants($filiereId);
+    $stats       = $this->fetchStats();
+    // ... (8 méthodes de collecte au total)
+
+    // 2. Recherche web si nécessaire
+    $webResults = $this->needsWebSearch($message)
+        ? $this->searchWeb($message)
+        : null;
+
+    // 3. Prompt système complet
+    $systemPrompt = $this->buildSystemPrompt(..., $webResults);
+
+    // 4. Appel Groq (format OpenAI)
+    $res = Http::post('https://api.groq.com/openai/v1/chat/completions', [
+        'model'    => 'llama-3.1-8b-instant',
+        'messages' => $messages,
+    ]);
+
+    return response()->json(json_decode($res->json('choices.0.message.content')));
+}</pre>
+
+<!-- ═══════════════════════════════════════
+     SECTION 6
+═══════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1><span class="section-num">6</span> Accès complet à la base de données</h1>
+
+<h2>6.1 Principe</h2>
+
+<p>L'une des fonctionnalités les plus importantes est que l'IA a <strong>accès en lecture à l'intégralité de la base de données</strong> à chaque requête. Cela signifie que l'IA ne travaille jamais avec des données statiques ou anciennes : elle reçoit les informations les plus récentes à chaque message.</p>
+
+<h2>6.2 Les 8 méthodes de collecte</h2>
+
+<table class="doc-table">
+  <thead>
+    <tr><th>Méthode</th><th>Données collectées</th><th>Filtrage</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>fetchEdt()</code></td>
+      <td>Emplois du temps (jour, heure, matière, enseignant, salle)</td>
+      <td>Par filière + niveau + enseignant</td>
+    </tr>
+    <tr>
+      <td><code>fetchAlertes()</code></td>
+      <td>Modifications d'horaires (72 dernières heures)</td>
+      <td>Par filière</td>
+    </tr>
+    <tr>
+      <td><code>fetchAnnonces()</code></td>
+      <td>Annonces du département</td>
+      <td>Par filière (+ annonces globales)</td>
+    </tr>
+    <tr>
+      <td><code>fetchFilieres()</code></td>
+      <td>Liste de tous les départements (id, nom, code)</td>
+      <td>Aucun (toutes les filières)</td>
+    </tr>
+    <tr>
+      <td><code>fetchNiveaux()</code></td>
+      <td>Niveaux académiques (L1, L2, L3…) avec leur filière</td>
+      <td>Aucun (tous les niveaux)</td>
+    </tr>
+    <tr>
+      <td><code>fetchStats()</code></td>
+      <td>Compteurs globaux : nb étudiants, profs, cours, filières</td>
+      <td>Aucun</td>
+    </tr>
+    <tr>
+      <td><code>fetchEnseignants()</code></td>
+      <td>Liste complète des enseignants (nom, prénom)</td>
+      <td>Par filière si précisé</td>
+    </tr>
+    <tr>
+      <td><code>fetchEtudiants()</code></td>
+      <td>Liste des étudiants avec leur filière et niveau</td>
+      <td>Par filière</td>
+    </tr>
+    <tr>
+      <td><code>fetchChefs()</code></td>
+      <td>Chefs de programme et leur département</td>
+      <td>Aucun</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box">
+  <strong>Résultat :</strong> À chaque message de l'utilisateur, l'IA reçoit une "photographie" complète et fraîche de la base de données. Si un chef modifie un horaire à 14h00 et qu'un étudiant pose une question à 14h01, l'IA donnera déjà la bonne réponse avec le nouvel horaire.
+</div>
+
+<!-- ═══════════════════════════════════════
+     SECTION 7
+═══════════════════════════════════════ -->
+<h1><span class="section-num">7</span> Le prompt système : cerveau de l'IA</h1>
+
+<h2>7.1 Qu'est-ce qu'un prompt système ?</h2>
+
+<p>Un <strong>prompt système</strong> (ou <em>system prompt</em>) est un texte d'instructions que l'on envoie au modèle de langage <em>avant</em> le message de l'utilisateur. Il définit le comportement, le rôle, les règles et les données disponibles pour l'IA. C'est l'équivalent d'un "contrat de travail" pour l'IA.</p>
+
+<h2>7.2 Structure du prompt système</h2>
+
+<p>Le prompt est généré dynamiquement par la méthode <code>buildSystemPrompt()</code> et contient les sections suivantes :</p>
+
+<ol>
+  <li>
+    <strong>Identité et langue</strong> : "Tu es l'assistant IA du système EDT de l'UGANC. Réponds dans la même langue que l'utilisateur."
+  </li>
+  <li>
+    <strong>Contexte temporel</strong> : date actuelle, jour de la semaine, heure exacte. Cela permet à l'IA de répondre "Qui enseigne <em>aujourd'hui</em> ?" correctement.
+  </li>
+  <li>
+    <strong>Profil utilisateur connecté</strong> : nom, rôle (chef/prof/étudiant), département, niveau. L'IA sait à qui elle parle.
+  </li>
+  <li>
+    <strong>Données de la base de données</strong> : filières, niveaux, emploi du temps complet, alertes, enseignants, étudiants, chefs, statistiques — tout en format compact.
+  </li>
+  <li>
+    <strong>Résultats web</strong> (si applicable) : informations trouvées sur internet via Tavily pour les questions mondiales.
+  </li>
+  <li>
+    <strong>Liste des actions disponibles</strong> : l'IA peut déclencher des actions dans l'interface (voir section 10).
+  </li>
+  <li>
+    <strong>Règles de comportement</strong> : 9 règles précises pour éviter les hallucinations et garantir des réponses pertinentes.
+  </li>
+</ol>
+
+<h2>7.3 Les 9 règles comportementales</h2>
+
+<p>Ces règles ont été affinées au fil des tests pour corriger les problèmes rencontrés :</p>
+
+<table class="doc-table">
+  <thead><tr><th>#</th><th>Règle</th><th>Problème corrigé</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Questions sur l'application → données BD uniquement</td>
+      <td>Empêche l'IA d'inventer des horaires</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Questions générales → connaissances + résultats web</td>
+      <td>Permettre les questions sur la Guinée, universités, etc.</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>Convertir les noms en IDs dans les params des actions</td>
+      <td>Permet à l'interface d'exécuter l'action directement</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>"Qui enseigne aujourd'hui ?" → consulter l'heure actuelle</td>
+      <td>Réponse contextualisée selon le moment de la journée</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>Ne jamais inventer de données spécifiques à l'app</td>
+      <td>Correction de l'hallucination "Sophie connectée"</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Rôles : chef=responsable, prof=enseignant, étudiant=élève</td>
+      <td>L'IA comprend la hiérarchie universitaire</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>"Voir tout ensemble" → action show_edt_jour</td>
+      <td>Correction de la réponse "diplopie" hors contexte</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Si la conv. portait sur les horaires, rester dans ce contexte</td>
+      <td>Cohérence de la conversation</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>Jamais de réponse médicale/hors-sujet dans contexte EDT</td>
+      <td>Correction des hallucinations thématiques</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════
+     SECTION 8
+═══════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1><span class="section-num">8</span> Optimisation des tokens</h1>
+
+<h2>8.1 Problème initial</h2>
+
+<p>Lors des premiers tests, le système renvoyait une erreur <strong>"Rate limit exceeded"</strong>. L'analyse a montré que le prompt système contenait environ <strong>3 400 tokens</strong>, ce qui dépassait la limite gratuite de Groq (6 000 tokens par minute, prompt + réponse compris).</p>
+
+<h2>8.2 Techniques d'optimisation appliquées</h2>
+
+<p>Plusieurs optimisations ont été développées pour réduire la taille du prompt tout en conservant toutes les informations nécessaires :</p>
+
+<h3>Technique 1 — Format compact "id:nom"</h3>
+<p>Au lieu d'écrire :</p>
+<pre>Filières disponibles :
+  - ID 1 : Nouvelles Technologies de l'Information et de la Communication (NTIC)
+  - ID 2 : Droit et Libertés</pre>
+<p>On écrit :</p>
+<pre>DEPARTMENTS: 1:NTIC, 2:DL</pre>
+
+<h3>Technique 2 — EDT en une ligne par cours</h3>
+<p>Format ultra-compact :</p>
+<pre>Lundi 08:00-10:00: Algorithmique | Makera Kaba | Salle A [f:1,n:2]</pre>
+
+<h3>Technique 3 — Limitation des entrées</h3>
+<p>Maximum 20 entrées dans l'EDT, 3 annonces, 5 alertes. Les données les plus récentes ont la priorité.</p>
+
+<h3>Technique 4 — Historique limité</h3>
+<p>Seuls les <strong>10 derniers échanges</strong> (20 messages) sont envoyés au modèle. Les messages trop anciens sont automatiquement supprimés.</p>
+
+<div class="box-green">
+  <strong>Résultat :</strong> Le prompt est passé de ~3 400 tokens à ~800 tokens en moyenne, soit une <strong>réduction de 76 %</strong>. Zéro erreur de limite depuis l'optimisation.
+</div>
+
+<!-- ═══════════════════════════════════════
+     SECTION 9
+═══════════════════════════════════════ -->
+<h1><span class="section-num">9</span> Recherche web en temps réel (Tavily)</h1>
+
+<h2>9.1 Pourquoi une recherche web ?</h2>
+
+<p>Le modèle LLaMA 3.1 a une date de coupure de connaissances (il ne connaît pas les événements très récents). De plus, pour des questions très spécifiques sur les universités guinéennes, l'actualité nationale ou des sujets pointus, il est préférable d'interroger internet directement.</p>
+
+<p>L'API <strong>Tavily</strong> a été choisie car elle est spécialement conçue pour alimenter des modèles de langage avec des résultats de recherche web en temps réel. L'offre gratuite offre <strong>1 000 recherches par mois</strong>.</p>
+
+<h2>9.2 Détection intelligente : faut-il chercher sur le web ?</h2>
+
+<p>La méthode <code>needsWebSearch()</code> analyse la question de l'utilisateur. Si elle contient des mots-clés liés à l'application (EDT, cours, filière, niveau, salle, enseignant, NTIC, etc.), aucune recherche web n'est effectuée — les données de la BD suffisent. Dans les autres cas, une recherche est lancée.</p>
+
+<pre>private function needsWebSearch(string $message): bool
+{
+    $appKeywords = ['edt', 'cours', 'filiere', 'niveau', 'enseignant',
+                    'salle', 'ntic', 'dl', 'lundi', 'mardi', ...];
+
+    $lower = mb_strtolower($message);
+    foreach ($appKeywords as $kw) {
+        if (str_contains($lower, $kw)) return false; // → BD suffisante
+    }
+
+    if (str_word_count($message) <= 3) return false; // Courte question → pas de web
+
+    return true; // → Recherche Tavily
+}</pre>
+
+<h2>9.3 Exemples</h2>
+
+<table class="doc-table">
+  <thead><tr><th>Question</th><th>Source utilisée</th></tr></thead>
+  <tbody>
+    <tr><td>« Qui donne cours lundi ? »</td><td>Base de données (EDT)</td></tr>
+    <tr><td>« Parle-moi de l'université de Nongo »</td><td>Tavily (web)</td></tr>
+    <tr><td>« Combien d'étudiants sont inscrits ? »</td><td>Base de données (stats)</td></tr>
+    <tr><td>« Quelles sont les universités de Guinée ? »</td><td>Tavily (web) + connaissances LLaMA</td></tr>
+    <tr><td>« Merci »</td><td>Aucune recherche (trop court)</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════
+     SECTION 10
+═══════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1><span class="section-num">10</span> Système d'actions IA → Interface</h1>
+
+<h2>10.1 Principe</h2>
+
+<p>L'innovation majeure de l'architecture est que l'IA ne se contente pas de <em>répondre en texte</em> : elle peut aussi <strong>déclencher des actions dans l'interface graphique</strong>. Pour cela, l'IA retourne toujours sa réponse dans un format JSON structuré :</p>
+
+<pre>{
+  "message": "Voici l'emploi du temps du lundi pour votre département.",
+  "action":  "show_edt_jour",
+  "params":  { "jour": "Lundi", "filiere_id": 1, "niveau_id": 3 }
+}</pre>
+
+<p>Le frontend JavaScript intercepte ce JSON et exécute la fonction correspondante à l'action.</p>
+
+<h2>10.2 Liste des actions disponibles</h2>
+
+<table class="doc-table">
+  <thead><tr><th>Action</th><th>Effet dans l'interface</th><th>Paramètres</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><code>show_edt_jour</code></td>
+      <td>Affiche le tableau de l'EDT d'un jour précis</td>
+      <td>jour, filiere_id, niveau_id</td>
+    </tr>
+    <tr>
+      <td><code>show_edt_semaine</code></td>
+      <td>Affiche l'EDT de toute la semaine courante</td>
+      <td>filiere_id, niveau_id</td>
+    </tr>
+    <tr>
+      <td><code>show_edt_semestriel</code></td>
+      <td>Affiche l'EDT complet du semestre</td>
+      <td>filiere_id, niveau_id</td>
+    </tr>
+    <tr>
+      <td><code>show_alertes</code></td>
+      <td>Affiche les modifications d'horaires récentes</td>
+      <td>aucun</td>
+    </tr>
+    <tr>
+      <td><code>show_planning_enseignant</code></td>
+      <td>Affiche le planning d'un enseignant précis</td>
+      <td>enseignant_id, enseignant_nom</td>
+    </tr>
+    <tr>
+      <td><code>download_pdf</code></td>
+      <td>Génère et télécharge le PDF de l'EDT</td>
+      <td>filiere_id, niveau_id</td>
+    </tr>
+    <tr>
+      <td><code>none</code></td>
+      <td>Réponse texte simple, aucune action visuelle</td>
+      <td>aucun</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>10.3 Avantage clé</h2>
+
+<p>L'IA envoie les <code>filiere_id</code> et <code>niveau_id</code> directement dans les params. Cela signifie que l'utilisateur <strong>n'a pas besoin de sélectionner manuellement sa filière</strong> avant de poser une question : l'IA identifie elle-même le département concerné à partir des données du prompt.</p>
+
+<div class="box">
+  <strong>Exemple :</strong> Un étudiant NTIC L2 écrit "montre moi mon emploi du temps de la semaine". L'IA retourne <code>action: "show_edt_semaine", params: {filiere_id: 1, niveau_id: 3}</code> et le tableau s'affiche immédiatement, sans aucun clic supplémentaire.
+</div>
+
+<!-- ═══════════════════════════════════════
+     SECTION 11
+═══════════════════════════════════════ -->
+<h1><span class="section-num">11</span> Historique de conversation</h1>
+
+<p>L'IA maintient un <strong>historique de conversation</strong> (mémoire à court terme) pour comprendre le contexte des messages successifs. Cela permet des échanges naturels du type :</p>
+
+<div class="box-orange">
+  Utilisateur : « Qui donne cours lundi ? »<br>
+  IA : « Makera Kaba et Ibrahima Camara... »<br>
+  Utilisateur : « Et le jeudi ? » ← L'IA comprend qu'on parle toujours des enseignants.
+</div>
+
+<p>Techniquement, les 10 derniers échanges (20 messages au maximum) sont envoyés à l'API Groq dans le tableau <code>messages</code> au format standard OpenAI :</p>
+
+<pre>$messages = [
+    ['role' => 'system',    'content' => $systemPrompt],  // Instructions
+    ['role' => 'user',      'content' => 'Qui donne cours lundi ?'],
+    ['role' => 'assistant', 'content' => 'Makera Kaba...'],
+    ['role' => 'user',      'content' => 'Et le jeudi ?'],  // Question actuelle
+];</pre>
+
+<p>Ce format est identique à celui utilisé par ChatGPT, ce qui démontre la compatibilité entre les différentes API de modèles de langage.</p>
+
+<!-- ═══════════════════════════════════════
+     SECTION 12
+═══════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1><span class="section-num">12</span> Notifications en temps réel</h1>
+
+<h2>12.1 Architecture des notifications</h2>
+
+<p>Un système de notifications en temps réel a été développé pour informer automatiquement les utilisateurs des changements qui les concernent. Le système repose sur trois composants :</p>
+
+<ul>
+  <li><strong><code>NotificationApp</code></strong> : modèle Eloquent représentant une notification (titre, message, type, destinataire, lu/non-lu).</li>
+  <li><strong><code>NotificationService</code></strong> : service PHP centralisé pour créer et envoyer des notifications selon le contexte.</li>
+  <li><strong><code>NotificationController</code></strong> : contrôleur API exposant les endpoints HTTP.</li>
+</ul>
+
+<h2>12.2 Types de notifications envoyées automatiquement</h2>
+
+<table class="doc-table">
+  <thead><tr><th>Événement</th><th>Destinataires</th><th>Déclencheur</th></tr></thead>
+  <tbody>
+    <tr>
+      <td>Modification d'horaire</td>
+      <td>Étudiants du département + enseignant concerné</td>
+      <td>Chef de programme</td>
+    </tr>
+    <tr>
+      <td>Mise à jour par un professeur</td>
+      <td>Étudiants du département</td>
+      <td>Professeur</td>
+    </tr>
+    <tr>
+      <td>Progression d'année (L1 → L2)</td>
+      <td>Chaque étudiant individuellement</td>
+      <td>Chef de programme</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>12.3 Technique de polling</h2>
+
+<p>Les notifications sont récupérées par le frontend via un mécanisme de <strong>polling</strong> (interrogation périodique) toutes les <strong>30 secondes</strong> :</p>
+
+<pre>// JavaScript — polling toutes les 30 secondes
+setInterval(fetchNotifications, 30000);
+
+async function fetchNotifications() {
+    const res  = await fetch('/api/notifications');
+    const data = await res.json();
+    const count = data.unread_count;
+    // Afficher le badge rouge sur la cloche si count > 0
+}</pre>
+
+<p>Cette approche a été choisie pour sa simplicité et sa compatibilité universelle, sans nécessiter WebSockets ou Laravel Echo.</p>
+
+<h2>12.4 Scoping par département</h2>
+
+<p>Les notifications sont <strong>scoped par filière</strong> : un étudiant NTIC ne reçoit jamais les notifications du département DL, même si les deux filières sont dans la même base de données. Ce cloisonnement est appliqué dans <code>NotificationService</code> via le <code>filiere_id</code>.</p>
+
+<!-- ═══════════════════════════════════════
+     SECTION 13
+═══════════════════════════════════════ -->
+<h1><span class="section-num">13</span> Progression d'année académique</h1>
+
+<h2>13.1 Problématique</h2>
+
+<p>En fin d'année, les étudiants de L1 doivent "passer" en L2. Cette opération ne peut être effectuée que par le <strong>chef de programme du département concerné</strong> et ne doit affecter que les étudiants de ce département — pas ceux d'autres filières.</p>
+
+<h2>13.2 Implémentation</h2>
+
+<p>Le <code>ProgressionController</code> gère cette fonctionnalité :</p>
+
+<ul>
+  <li><strong>GET <code>/api/chef/niveaux</code></strong> : retourne les niveaux de la filière du chef connecté avec le nombre d'étudiants par niveau.</li>
+  <li><strong>POST <code>/api/chef/progression</code></strong> : déplace tous les étudiants d'un niveau source vers un niveau cible.</li>
+</ul>
+
+<p>Validations de sécurité appliquées :</p>
+<ol>
+  <li>Vérification que l'utilisateur est bien un chef de programme.</li>
+  <li>Vérification que les deux niveaux (source et cible) appartiennent à la filière du chef.</li>
+  <li>Envoi d'une notification personnalisée à chaque étudiant promu.</li>
+</ol>
+
+<div class="box-green">
+  <strong>Résultat :</strong> Si le chef de programme NTIC lance la progression L1 → L2, seuls les étudiants NTIC-L1 sont déplacés vers NTIC-L2. Les étudiants DL ne sont pas affectés.
+</div>
+
+<!-- ═══════════════════════════════════════
+     SECTION 14
+═══════════════════════════════════════ -->
+<div class="page-break"></div>
+<h1><span class="section-num">14</span> Problèmes rencontrés et solutions</h1>
+
+<p>Le développement a nécessité de résoudre plusieurs défis techniques importants :</p>
+
+<table class="doc-table">
+  <thead>
+    <tr>
+      <th>Problème</th>
+      <th>Cause</th>
+      <th>Solution appliquée</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>API Gemini : quota = 0</td>
+      <td>Compte Google sans accès API activé</td>
+      <td>Migration vers Groq (gratuit, immédiat)</td>
+    </tr>
+    <tr>
+      <td>Erreur "Rate limit" Groq</td>
+      <td>Prompt de 3 400 tokens, limite 6 000 TPM</td>
+      <td>Optimisation du prompt → ~800 tokens (-76%)</td>
+    </tr>
+    <tr>
+      <td>IA invente "Sophie connectée"</td>
+      <td>Règle mal formulée sur l'accès aux données</td>
+      <td>Règle explicite : "JAMAIS inventer de données app"</td>
+    </tr>
+    <tr>
+      <td>IA refuse les questions guinéennes</td>
+      <td>Règle "n'invente rien" trop restrictive</td>
+      <td>Séparation : données app vs. connaissances générales</td>
+    </tr>
+    <tr>
+      <td>IA répond "diplopie" hors contexte</td>
+      <td>"Voir tout en même temps" mal interprété</td>
+      <td>Règles 7-9 : maintien du contexte EDT</td>
+    </tr>
+    <tr>
+      <td>Erreur MySQL FIELD() vide</td>
+      <td>Liste d'IDs enseignants vide dans la requête</td>
+      <td>Simplification : <code>orderBy('nom')</code> sans FIELD()</td>
+    </tr>
+    <tr>
+      <td>Dropdown enseignant à chaque fois</td>
+      <td>Action show_planning_enseignant = toujours dropdown</td>
+      <td>Si enseignant_id dans params → chargement direct</td>
+    </tr>
+    <tr>
+      <td>Bouton prof planifiait erreur JS</td>
+      <td>Appel à une fonction inexistante chargerEdtEnseignant</td>
+      <td>Corrigé → chargerPlanningEnseignant</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════
+     SECTION 15
+═══════════════════════════════════════ -->
+<h1><span class="section-num">15</span> Conclusion</h1>
+
+<h2>15.1 Récapitulatif des apports de l'IA</h2>
+
+<p>L'intégration de l'intelligence artificielle dans le Chatbot EDT de l'UGANC a transformé une application de gestion classique en un <strong>assistant conversationnel intelligent</strong> capable de :</p>
+
+<ul>
+  <li>Répondre en langage naturel (français, anglais) à toute question sur l'emploi du temps ;</li>
+  <li>Accéder en temps réel à l'intégralité de la base de données ;</li>
+  <li>Déclencher automatiquement des vues de l'interface sans que l'utilisateur ait à naviguer ;</li>
+  <li>Rechercher des informations sur internet pour les questions mondiales ;</li>
+  <li>Maintenir le contexte d'une conversation sur plusieurs échanges ;</li>
+  <li>Respecter le cloisonnement par département (sécurité des données).</li>
+</ul>
+
+<h2>15.2 Technologies utilisées — Récapitulatif</h2>
+
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;">
+  <span class="tag">Laravel 10 (PHP)</span>
+  <span class="tag">MySQL</span>
+  <span class="tag">LLaMA 3.1 8B</span>
+  <span class="tag">Groq API</span>
+  <span class="tag-green">Tavily Search API</span>
+  <span class="tag">JavaScript ES6</span>
+  <span class="tag">Blade Templates</span>
+  <span class="tag-orange">OpenAI API Format</span>
+  <span class="tag">Eloquent ORM</span>
+  <span class="tag-green">Notification Polling</span>
+</div>
+
+<h2>15.3 Perspectives d'amélioration</h2>
+
+<ul>
+  <li>Intégration de WebSockets (Laravel Echo + Pusher) pour des notifications instantanées sans polling.</li>
+  <li>Passage à un modèle plus puissant (LLaMA 3.3 70B ou Mixtral) pour des réponses encore plus précises.</li>
+  <li>Ajout d'une synthèse vocale pour rendre le chatbot accessible aux utilisateurs malvoyants.</li>
+  <li>Interface mobile dédiée (application Android/iOS).</li>
+</ul>
+
+<hr>
+<p style="text-align:center;color:#64748B;font-size:10pt;margin-top:30px;">
+  Document produit dans le cadre du projet Chatbot EDT — UGANC, Groupe 6<br>
+  Filière : Nouvelles Technologies de l'Information et de la Communication (NTIC)<br>
+  Année académique 2025 – 2026
+</p>
+
+</body>
+</html>

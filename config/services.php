@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'), // contient la clé Groq (gsk_...)
+    ],
+
+    'tavily' => [
+        'key' => env('TAVILY_API_KEY'),
+    ],
+
 ];

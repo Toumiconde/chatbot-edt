@@ -12,4 +12,9 @@ class Enseignant extends Model
     {
         return $this->hasMany(EmploiDuTemps::class);
     }
+
+    public function user()
+    {
+        return $this->hasOne(User::class);
+    }
 }

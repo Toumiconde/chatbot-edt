@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Chatbot EDT — UGANC</title>
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   <!-- Lucide Icons — icônes professionnelles SVG -->
@@ -383,6 +384,29 @@
         max-width: 100%; height: 100vh; max-height: 100vh;
         border-radius: 24px 24px 0 0;
       }
+      .opt-btn { font-size: 11.5px; padding: 6px 10px; }
+      .quick-tag { font-size: 10px; padding: 3px 8px; }
+      .edt-table { font-size: 11px; }
+      .edt-table thead th, .edt-table tbody td { padding: 6px 7px; }
+    }
+    @media (max-width: 380px) {
+      .opt-btn { font-size: 10.5px; padding: 5px 8px; }
+    }
+
+    /* ── TOAST NOTIFICATION ── */
+    #toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px);
+      background: #0F172A; color: #fff;
+      padding: 10px 20px; border-radius: 50px;
+      font-size: 13px; font-weight: 500;
+      box-shadow: 0 8px 30px rgba(0,0,0,.3);
+      transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+      opacity: 0; pointer-events: none; z-index: 9999;
+      display: flex; align-items: center; gap: 8px;
+    }
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
     }
   </style>
 </head>
@@ -402,6 +426,68 @@
     <div class="header-status">
       <div class="status-dot"></div>
       <span class="status-text">En ligne</span>
+      <!-- Cloche notifications -->
+      @auth
+      <div style="position:relative;margin-left:8px;">
+        <button id="notif-btn" onclick="toggleNotifDropdown()" title="Notifications" style="
+          width:30px;height:30px;
+          background:rgba(255,255,255,.12);
+          border:1px solid rgba(255,255,255,.2);
+          border-radius:50%;
+          display:flex;align-items:center;justify-content:center;
+          cursor:pointer;transition:background .2s;
+        " onmouseover="this.style.background='rgba(255,255,255,.22)'" onmouseout="this.style.background='rgba(255,255,255,.12)'">
+          <i data-lucide="bell" style="width:14px;height:14px;color:#fff"></i>
+        </button>
+        <span id="notif-badge" style="
+          display:none;position:absolute;top:-4px;right:-4px;
+          background:#EF4444;color:#fff;
+          font-size:9px;font-weight:700;
+          width:16px;height:16px;border-radius:50%;
+          display:none;align-items:center;justify-content:center;
+          border:1.5px solid #1B4FD8;
+        ">0</span>
+        <!-- Dropdown notifications -->
+        <div id="notif-dropdown" style="
+          display:none;position:absolute;top:38px;right:0;
+          width:300px;max-height:360px;overflow-y:auto;
+          background:#fff;border-radius:14px;
+          box-shadow:0 8px 30px rgba(0,0,0,.18);
+          border:1px solid #E2E8F0;z-index:9999;
+        "></div>
+      </div>
+      @endauth
+
+      <a href="/tableau-de-bord" title="Tableau de bord" style="
+        margin-left:8px;
+        width:30px;height:30px;
+        background:rgba(255,255,255,.12);
+        border:1px solid rgba(255,255,255,.2);
+        border-radius:50%;
+        display:flex;align-items:center;justify-content:center;
+        text-decoration:none;
+        transition:background .2s;
+      " onmouseover="this.style.background='rgba(255,255,255,.22)'" onmouseout="this.style.background='rgba(255,255,255,.12)'">
+        <i data-lucide="layout-dashboard" style="width:14px;height:14px;color:#fff"></i>
+      </a>
+
+      @auth
+      <form method="POST" action="{{ route('logout') }}" style="margin:0; margin-left:4px;">
+        @csrf
+        <button type="submit" title="Se déconnecter" style="
+          width:30px;height:30px;
+          background:rgba(239,68,68,.12);
+          border:1px solid rgba(239,68,68,.25);
+          border-radius:50%;
+          display:flex;align-items:center;justify-content:center;
+          text-decoration:none;
+          cursor:pointer;
+          transition:background .2s;
+        " onmouseover="this.style.background='rgba(239,68,68,.25)'" onmouseout="this.style.background='rgba(239,68,68,.12)'">
+          <i data-lucide="log-out" style="width:14px;height:14px;color:#FCA5A5"></i>
+        </button>
+      </form>
+      @endauth
     </div>
   </div>
  
@@ -433,12 +519,16 @@
 // ─────────────────────────────────────────
 // VARIABLES GLOBALES
 // ─────────────────────────────────────────
-let selectedFiliereId   = null;
-let selectedFiliereNom  = null;
-let selectedNiveauId    = null;
-let selectedNiveauNom   = null;
+let userRole            = {!! auth()->check() ? json_encode(auth()->user()->role) : 'null' !!};
+let userName            = {!! auth()->check() ? json_encode(auth()->user()->name) : 'null' !!};
+let selectedFiliereId   = {!! auth()->check() && auth()->user()->filiere_id ? auth()->user()->filiere_id : 'null' !!};
+let selectedFiliereNom  = {!! auth()->check() && auth()->user()->filiere ? json_encode(auth()->user()->filiere->nom) : 'null' !!};
+let selectedNiveauId    = {!! auth()->check() && auth()->user()->role === 'etudiant' && auth()->user()->niveau_id ? auth()->user()->niveau_id : 'null' !!};
+let selectedNiveauNom   = {!! auth()->check() && auth()->user()->role === 'etudiant' && auth()->user()->niveau ? json_encode(auth()->user()->niveau->libelle) : 'null' !!};
+let profEnseignantId    = {!! auth()->check() && auth()->user()->role === 'prof' ? auth()->user()->enseignant_id : 'null' !!};
 let selectedJour        = null;
 let selectedEnseignant  = null;
+let conversationHistory = [];
  
 // ─────────────────────────────────────────
 // BREADCRUMB — fil d'ariane en haut
@@ -565,6 +655,7 @@ function afficherTableau(cours) {
 function accueil() {
   selectedFiliereId = selectedFiliereNom = selectedNiveauId =
   selectedNiveauNom = selectedJour = selectedEnseignant = null;
+  conversationHistory = [];
   updateBreadcrumb([
     '<i data-lucide="home" style="width:12px;height:12px"></i> Accueil'
   ]);
@@ -637,15 +728,16 @@ function choisirNiveau(id, libelle) {
     `<i data-lucide="hash" style="width:12px;height:12px"></i> ${libelle}`,
     '<i data-lucide="calendar-days" style="width:12px;height:12px"></i> Période'
   ]);
-  addMessage('Comment voulez-vous consulter l\'EDT ?');
+  addMessage(`Parfait ! Que souhaitez-vous consulter pour <strong>${selectedFiliereNom} — ${libelle}</strong> ?`);
   showQuickSuggestions([
-    { label: 'lundi',   icon: 'sun' },
-    { label: 'semaine', icon: 'calendar-range' },
-    { label: 'pdf',     icon: 'download' },
+    { label: 'semestriel', icon: 'layout-list' },
+    { label: 'semaine',    icon: 'calendar-range' },
+    { label: 'pdf',        icon: 'download' },
   ]);
   showOptions([
-    { label: 'Par jour',    icon: 'calendar-days', action: afficherChoixJour, style: 'primary' },
-    { label: 'Par semaine', icon: 'calendar-range', action: chargerSemaine },
+    { label: '📋 EDT Semestriel complet', icon: 'layout-list',   action: chargerSemesterComplet, style: 'primary' },
+    { label: '📅 Par jour',               icon: 'calendar-days', action: afficherChoixJour },
+    { label: '📆 Semaine courante',        icon: 'calendar-range', action: chargerSemaine },
   ]);
 }
  
@@ -729,7 +821,92 @@ function chargerSemaine() {
       ]);
     });
 }
- 
+
+// ─────────────────────────────────────────
+// EDT SEMESTRIEL COMPLET — tous les cours
+// par jour pour la filière/niveau choisis
+// ─────────────────────────────────────────
+function chargerSemesterComplet() {
+  addMessage('📋 EDT Semestriel complet', 'user');
+  updateBreadcrumb([
+    '<i data-lucide="home" style="width:12px;height:12px"></i> Accueil',
+    `<i data-lucide="layers" style="width:12px;height:12px"></i> ${selectedFiliereNom}`,
+    `<i data-lucide="hash" style="width:12px;height:12px"></i> ${selectedNiveauNom}`,
+    '<i data-lucide="layout-list" style="width:12px;height:12px"></i> Semestriel'
+  ]);
+  showLoader();
+  const params = new URLSearchParams({ filiere_id: selectedFiliereId, niveau_id: selectedNiveauId });
+  fetch('/api/edt/semaine?' + params)
+    .then(r => r.json())
+    .then(data => {
+      hideLoader();
+      const jours = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi'];
+      const body = document.getElementById('chat-body');
+
+      // En-tête de présentation
+      const header = document.createElement('div');
+      header.style.cssText = `
+        background: linear-gradient(135deg,#1B4FD8,#7C3AED);
+        border-radius: 16px; padding: 16px 18px; margin: 8px 0;
+        color: #fff; font-size: 13px;
+      `;
+      let totalCours = 0;
+      jours.forEach(j => { if (data[j]) totalCours += data[j].length; });
+      header.innerHTML = `
+        <div style="font-size:15px;font-weight:800;margin-bottom:4px">
+          📋 Emploi du temps semestriel
+        </div>
+        <div style="opacity:.8;font-size:12px">${selectedFiliereNom} — ${selectedNiveauNom}</div>
+        <div style="margin-top:8px;display:flex;gap:12px;flex-wrap:wrap">
+          <span style="background:rgba(255,255,255,.15);padding:3px 10px;border-radius:50px;font-size:11px">
+            📚 ${totalCours} cours au total
+          </span>
+          <span style="background:rgba(255,255,255,.15);padding:3px 10px;border-radius:50px;font-size:11px">
+            📅 ${jours.filter(j => data[j] && data[j].length > 0).length} jours actifs
+          </span>
+        </div>
+      `;
+      body.appendChild(header);
+
+      // Afficher chaque jour
+      let hasAny = false;
+      jours.forEach(jour => {
+        if (!data[jour] || data[jour].length === 0) return;
+        hasAny = true;
+
+        // Label du jour avec style premium
+        const dayBanner = document.createElement('div');
+        dayBanner.style.cssText = `
+          display:flex; align-items:center; gap:8px;
+          background:#EFF6FF; border-left:4px solid #1B4FD8;
+          border-radius:0 10px 10px 0; padding:8px 14px;
+          margin: 10px 0 6px;
+          font-size:12px; font-weight:700; color:#1B4FD8;
+        `;
+        dayBanner.innerHTML = `<i data-lucide="sun" style="width:13px;height:13px"></i> ${jour.toUpperCase()}`;
+        body.appendChild(dayBanner);
+        lucide.createIcons();
+
+        afficherTableau(data[jour]);
+      });
+
+      if (!hasAny) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-msg';
+        empty.innerHTML = `<i data-lucide="moon" style="width:28px;height:28px"></i><span>Aucun cours enregistré pour cette promotion.</span>`;
+        body.appendChild(empty);
+        lucide.createIcons();
+      }
+
+      body.scrollTop = body.scrollHeight;
+      showOptions([
+        { label: '⬇️ Télécharger PDF', icon: 'download', action: () => telechargerPDF(), style: 'success' },
+        { label: '🏠 Retour accueil',  icon: 'home',     action: accueil,               style: 'danger'  },
+      ]);
+    })
+    .catch(() => { hideLoader(); addMessage('❌ Erreur lors du chargement de l\'EDT semestriel.'); });
+}
+
 // ─────────────────────────────────────────
 // ALERTES
 // GET /api/alertes → [{ ancien_jour, ancienne_heure, nouveau_jour, nouvelle_heure, motif, emploi_du_temps }]
@@ -853,22 +1030,13 @@ function chargerPlanningEnseignant(id, nom) {
         lucide.createIcons();
       }
       showOptions([
-        { label: 'Télécharger PDF', icon: 'download', action: () => window.open('/api/pdf?enseignant_id=' + id, '_blank'), style: 'success' },
-        { label: 'Retour accueil',  icon: 'home',     action: accueil, style: 'danger' },
+        { label: '⬇️ Télécharger', icon: 'download', action: () => telechargerPDFProf(id, nom), style: 'primary' },
+        { label: 'Retour accueil', icon: 'home', action: accueil, style: 'danger' },
       ]);
     });
 }
  
-// ─────────────────────────────────────────
-// PDF — téléchargement
-// GET /api/pdf?filiere_id=&niveau_id=&jour=
-// ─────────────────────────────────────────
-function telechargerPDF(jour = null) {
-  const params = new URLSearchParams({ filiere_id: selectedFiliereId, niveau_id: selectedNiveauId });
-  if (jour) params.append('jour', jour);
-  window.open('/api/pdf?' + params, '_blank');
-  addMessage('⬇️ PDF en cours de téléchargement...');
-}
+
  
 // ─────────────────────────────────────────
 // SUGGESTIONS RAPIDES — affichées au-dessus
@@ -891,146 +1059,341 @@ function showQuickSuggestions(tags) {
 }
  
 // ─────────────────────────────────────────
-// SAISIE LIBRE — détection de mots-clés
-// Pas d'IA : on cherche des mots connus dans
-// le texte tapé et on déclenche l'action liée.
+// SAISIE LIBRE — traitée par l'IA Gemini
 // ─────────────────────────────────────────
 function envoyerMessage() {
   const input = document.getElementById('chat-input');
   const texte = input.value.trim();
   if (!texte) return;
- 
+
   addMessage(texte, 'user');
   input.value = '';
+
+  conversationHistory.push({ role: 'user', content: texte });
+
+  askAI(texte);
+}
+
+async function askAI(texte) {
   showLoader();
- 
-  // Petit délai pour donner un effet "réflexion"
-  setTimeout(() => traiterMessage(texte.toLowerCase()), 450);
+  try {
+    const res = await fetch('/api/chatbot/ai', {
+      method: 'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'X-CSRF-TOKEN':  document.querySelector('meta[name="csrf-token"]').content,
+      },
+      body: JSON.stringify({
+        message:       texte,
+        history:       conversationHistory.slice(-10),
+        filiere_id:    selectedFiliereId,
+        niveau_id:     selectedNiveauId,
+        enseignant_id: profEnseignantId,
+      }),
+    });
+
+    const data = await res.json();
+    hideLoader();
+
+    if (data.message) {
+      addMessage(data.message);
+      conversationHistory.push({ role: 'assistant', content: data.message });
+      // Garde l'historique à 20 éléments max (10 échanges)
+      if (conversationHistory.length > 20) conversationHistory = conversationHistory.slice(-20);
+    }
+
+    if (data.action && data.action !== 'none') {
+      setTimeout(() => executeAction(data.action, data.params || {}), 250);
+    }
+
+  } catch (err) {
+    hideLoader();
+    addMessage('❌ Impossible de contacter l\'assistant. Vérifiez votre connexion et réessayez.');
+  }
 }
- 
-function traiterMessage(msg) {
-  hideLoader();
- 
-  // ── Salutations ──
-  if (/^(salut|bonjour|bonsoir|hello|coucou|slt)\b/.test(msg)) {
-    addMessage('Bonjour 👋 ! Que puis-je faire pour vous ?');
-    return showOptionsAccueilRapide();
+
+// ─────────────────────────────────────────
+// EXÉCUTION DES ACTIONS IA
+// Déclenché par la réponse de Gemini.
+// N'ajoute pas de bulle "user" (déjà affichée).
+// ─────────────────────────────────────────
+function executeAction(action, params) {
+  const body = document.getElementById('chat-body');
+
+  // L'IA peut envoyer filiere_id/niveau_id dans les params — on les utilise directement
+  if (params?.filiere_id)  selectedFiliereId  = params.filiere_id;
+  if (params?.filiere_nom) selectedFiliereNom = params.filiere_nom;
+  if (params?.niveau_id)   selectedNiveauId   = params.niveau_id;
+  if (params?.niveau_nom)  selectedNiveauNom  = params.niveau_nom;
+
+  if ((action === 'show_edt_jour' || action === 'show_edt_semaine' || action === 'show_edt_semestriel' || action === 'download_pdf') &&
+      (!selectedFiliereId || !selectedNiveauId)) {
+    addMessage('Veuillez d\'abord sélectionner votre filière et votre niveau via les boutons ci-dessous.');
+    chargerFilieres();
+    return;
   }
- 
-  // ── Aide ──
-  if (msg.includes('aide') || msg.includes('help') || msg.includes('menu')) {
-    addMessage('Voici ce que je peux faire pour vous :');
-    return showOptionsAccueilRapide();
-  }
- 
-  // ── Emploi du temps / cours ──
-  if (msg.includes('edt') || msg.includes('emploi') || msg.includes('cours') || msg.includes('planning') || msg.includes('horaire')) {
-    addMessage('Très bien, consultons votre emploi du temps 📅');
-    return chargerFilieres();
-  }
- 
-  // ── Alertes / modifications ──
-  if (msg.includes('alerte') || msg.includes('modif') || msg.includes('changement')) {
-    addMessage('Je vérifie les dernières modifications 🔔');
-    return chargerAlertes();
-  }
- 
-  // ── Enseignant ──
-  if (msg.includes('enseignant') || msg.includes('professeur') || msg.includes('prof')) {
-    addMessage('Voyons les enseignants disponibles 👨‍🏫');
-    return chargerEnseignants();
-  }
- 
-  // ── Jours de la semaine — uniquement si filière/niveau déjà choisis ──
-  const jours = { lundi:'Lundi', mardi:'Mardi', mercredi:'Mercredi', jeudi:'Jeudi', vendredi:'Vendredi' };
-  for (const [key, jour] of Object.entries(jours)) {
-    if (msg.includes(key)) {
-      if (selectedFiliereId && selectedNiveauId) {
-        addMessage(`D'accord, voici votre ${jour} :`);
-        return chargerJour(jour);
+
+  switch (action) {
+
+    case 'show_edt_jour': {
+      const jour = params.jour || 'Lundi';
+      selectedJour = jour;
+      showLoader();
+      fetch('/api/edt/jour?' + new URLSearchParams({ filiere_id: selectedFiliereId, niveau_id: selectedNiveauId, jour }))
+        .then(r => r.json())
+        .then(cours => {
+          hideLoader();
+          if (!cours.length) {
+            const div = document.createElement('div');
+            div.className = 'empty-msg';
+            div.innerHTML = `<i data-lucide="moon" style="width:28px;height:28px"></i><span>Aucun cours prévu ce <strong>${jour}</strong>.</span>`;
+            body.appendChild(div); lucide.createIcons();
+          } else {
+            afficherTableau(cours);
+          }
+          showOptions([
+            { label: '⬇️ PDF', icon: 'download', action: () => telechargerPDF(jour), style: 'success' },
+            { label: '🏠 Accueil', icon: 'home', action: accueil, style: 'danger' },
+          ]);
+        })
+        .catch(() => { hideLoader(); addMessage('❌ Erreur lors du chargement.'); });
+      break;
+    }
+
+    case 'show_edt_semaine': {
+      showLoader();
+      fetch('/api/edt/semaine?' + new URLSearchParams({ filiere_id: selectedFiliereId, niveau_id: selectedNiveauId }))
+        .then(r => r.json())
+        .then(data => {
+          hideLoader();
+          const jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+          let total = 0;
+          jours.forEach(j => {
+            if (data[j]?.length) {
+              total++;
+              const lbl = document.createElement('div');
+              lbl.className = 'day-label';
+              lbl.textContent = j;
+              body.appendChild(lbl);
+              afficherTableau(data[j]);
+            }
+          });
+          if (!total) {
+            const div = document.createElement('div');
+            div.className = 'empty-msg';
+            div.innerHTML = `<i data-lucide="moon" style="width:28px;height:28px"></i><span>Aucun cours cette semaine.</span>`;
+            body.appendChild(div); lucide.createIcons();
+          }
+          body.scrollTop = body.scrollHeight;
+          showOptions([
+            { label: '⬇️ PDF', icon: 'download', action: () => telechargerPDF(), style: 'success' },
+            { label: '🏠 Accueil', icon: 'home', action: accueil, style: 'danger' },
+          ]);
+        })
+        .catch(() => { hideLoader(); addMessage('❌ Erreur lors du chargement.'); });
+      break;
+    }
+
+    case 'show_edt_semestriel': {
+      showLoader();
+      fetch('/api/edt/semaine?' + new URLSearchParams({ filiere_id: selectedFiliereId, niveau_id: selectedNiveauId }))
+        .then(r => r.json())
+        .then(data => {
+          hideLoader();
+          const jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+          let totalCours = 0;
+          jours.forEach(j => { if (data[j]) totalCours += data[j].length; });
+
+          const header = document.createElement('div');
+          header.style.cssText = 'background:linear-gradient(135deg,#1B4FD8,#7C3AED);border-radius:16px;padding:16px 18px;margin:8px 0;color:#fff;font-size:13px;';
+          header.innerHTML = `
+            <div style="font-size:15px;font-weight:800;margin-bottom:4px">📋 Emploi du temps semestriel</div>
+            <div style="opacity:.8;font-size:12px">${selectedFiliereNom || ''} — ${selectedNiveauNom || ''}</div>
+            <div style="margin-top:8px;display:flex;gap:12px;flex-wrap:wrap">
+              <span style="background:rgba(255,255,255,.15);padding:3px 10px;border-radius:50px;font-size:11px">📚 ${totalCours} cours</span>
+              <span style="background:rgba(255,255,255,.15);padding:3px 10px;border-radius:50px;font-size:11px">📅 ${jours.filter(j => data[j]?.length).length} jours actifs</span>
+            </div>`;
+          body.appendChild(header);
+
+          let hasAny = false;
+          jours.forEach(jour => {
+            if (!data[jour]?.length) return;
+            hasAny = true;
+            const banner = document.createElement('div');
+            banner.style.cssText = 'display:flex;align-items:center;gap:8px;background:#EFF6FF;border-left:4px solid #1B4FD8;border-radius:0 10px 10px 0;padding:8px 14px;margin:10px 0 6px;font-size:12px;font-weight:700;color:#1B4FD8;';
+            banner.innerHTML = `<i data-lucide="sun" style="width:13px;height:13px"></i> ${jour.toUpperCase()}`;
+            body.appendChild(banner);
+            lucide.createIcons();
+            afficherTableau(data[jour]);
+          });
+
+          if (!hasAny) {
+            const div = document.createElement('div');
+            div.className = 'empty-msg';
+            div.innerHTML = `<i data-lucide="moon" style="width:28px;height:28px"></i><span>Aucun cours enregistré.</span>`;
+            body.appendChild(div); lucide.createIcons();
+          }
+          body.scrollTop = body.scrollHeight;
+          showOptions([
+            { label: '⬇️ PDF', icon: 'download', action: () => telechargerPDF(), style: 'success' },
+            { label: '🏠 Accueil', icon: 'home', action: accueil, style: 'danger' },
+          ]);
+        })
+        .catch(() => { hideLoader(); addMessage('❌ Erreur lors du chargement.'); });
+      break;
+    }
+
+    case 'show_alertes': {
+      showLoader();
+      fetch('/api/alertes')
+        .then(r => r.json())
+        .then(alertes => {
+          hideLoader();
+          if (!alertes.length) {
+            addMessage('✅ Aucune modification dans les 48 dernières heures.');
+          } else {
+            alertes.forEach(a => {
+              const card = document.createElement('div');
+              card.className = 'alert-card';
+              const mat = a.emploi_du_temps?.matiere?.nom || 'Cours';
+              card.innerHTML = `
+                <div class="ac-title">
+                  <i data-lucide="alert-triangle" style="width:14px;height:14px;color:#F59E0B"></i>
+                  ${mat}
+                </div>
+                <div class="ac-body">
+                  <span class="ac-tag">${a.ancien_jour} ${fmtHeure(a.ancienne_heure)}</span>
+                  <i data-lucide="arrow-right" class="ac-arrow" style="width:14px;height:14px"></i>
+                  <span class="ac-tag">${a.nouveau_jour} ${fmtHeure(a.nouvelle_heure)}</span>
+                </div>
+                ${a.motif ? `<div class="ac-motif"><i data-lucide="message-circle" style="width:12px;height:12px"></i>${a.motif}</div>` : ''}`;
+              body.appendChild(card);
+              body.scrollTop = body.scrollHeight;
+            });
+            lucide.createIcons();
+          }
+          showOptions([{ label: '🏠 Accueil', icon: 'home', action: accueil, style: 'primary' }]);
+        })
+        .catch(() => { hideLoader(); addMessage('❌ Erreur lors du chargement.'); });
+      break;
+    }
+
+    case 'show_planning_enseignant': {
+      if (params?.enseignant_id) {
+        // L'IA a fourni l'ID directement → on charge sans passer par le dropdown
+        const nom = params.enseignant_nom || params.nom || 'Enseignant';
+        chargerPlanningEnseignant(params.enseignant_id, nom);
       } else {
-        addMessage(`Pour voir le ${jour}, choisissez d'abord votre filière et votre niveau :`);
-        return chargerFilieres();
+        // Sinon, afficher le sélecteur
+        chargerEnseignants();
       }
+      break;
+    }
+
+    case 'download_pdf': {
+      if (userRole === 'prof' && profEnseignantId) {
+        telechargerPDFProf(profEnseignantId, userName);
+      } else {
+        telechargerPDF(params?.jour || null);
+      }
+      break;
     }
   }
- 
-  // ── Semaine complète ──
-  if (msg.includes('semaine')) {
-    if (selectedFiliereId && selectedNiveauId) {
-      addMessage('Voici votre semaine complète :');
-      return chargerSemaine();
-    } else {
-      addMessage('Choisissez d\'abord votre filière et votre niveau :');
-      return chargerFilieres();
-    }
-  }
- 
-  // ── PDF ──
-  if (msg.includes('pdf') || msg.includes('télécharg') || msg.includes('telecharg')) {
-    if (selectedFiliereId && selectedNiveauId) {
-      return telechargerPDF(selectedJour);
-    } else {
-      addMessage('Choisissez d\'abord un emploi du temps à télécharger :');
-      return chargerFilieres();
-    }
-  }
- 
-  // ── Niveaux tapés manuellement (L1, L2, L3, etc.)
-  const niveauMatch = msg.match(/\b(l[0-9]+)\b/);
-  if (niveauMatch) {
-    const niveauLabel = niveauMatch[1].toUpperCase().trim();
-    if (!selectedFiliereId) {
-      addMessage('Pour choisir un niveau, commencez par sélectionner votre filière.');
-      return chargerFilieres();
-    }
-    addMessage(`D'accord, je cherche le niveau ${niveauLabel}...`);
-    showLoader();
-    return fetch('/api/niveaux/' + selectedFiliereId)
-      .then(r => r.json())
-      .then(niveaux => {
-        hideLoader();
-        const normalizedLabel = label => String(label || '').toUpperCase().replace(/\s+/g, '');
-        const niveau = niveaux.find(n => normalizedLabel(n.libelle) === normalizedLabel(niveauLabel))
-          || niveaux.find(n => normalizedLabel(n.libelle).includes(normalizedLabel(niveauLabel)));
-        if (!niveau) {
-          addMessage(`Je n'ai pas trouvé le niveau ${niveauLabel} pour cette filière. Choisissez un niveau parmi les options.`);
-          return chargerFilieres();
-        }
-        return choisirNiveau(niveau.id, niveau.libelle);
-      })
-      .catch(() => {
-        hideLoader();
-        addMessage('❌ Erreur serveur. Impossible de récupérer les niveaux.');
-      });
-  }
- 
-  // ── Accueil / retour ──
-  if (msg.includes('accueil') || msg.includes('retour') || msg.includes('recommenc')) {
-    addMessage('Retour à l\'accueil 🏠');
-    return accueil();
-  }
- 
-  // ── Merci / au revoir ──
-  if (/(merci|au revoir|bye|à bientôt)/.test(msg)) {
-    addMessage('Avec plaisir 😊 ! N\'hésitez pas si vous avez besoin d\'autre chose.');
-    return showOptionsAccueilRapide();
-  }
- 
-  // ── Rien compris ──
-  addMessage('Je n\'ai pas bien compris 🤔. Voici ce que je peux faire :');
-  showOptionsAccueilRapide();
 }
  
+// ─────────────────────────────────────────
+// TOAST — notification rapide non-intrusive
+// ─────────────────────────────────────────
+function showToast(msg, durationMs = 2800) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    document.body.appendChild(t);
+  }
+  t.innerHTML = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), durationMs);
+}
+
 // Affiche les options principales sans réinitialiser le contexte
 function showOptionsAccueilRapide() {
   showOptions([
-    { label: 'Voir mon EDT',          icon: 'calendar',   action: chargerFilieres,   style: 'primary' },
-    { label: 'Alertes modifications', icon: 'bell',       action: chargerAlertes                      },
-    { label: 'Je suis Enseignant',    icon: 'user-check', action: chargerEnseignants                  },
+    { label: '📋 Mon EDT semestriel',  icon: 'layout-list', action: chargerFilieres,   style: 'primary' },
+    { label: '🔔 Alertes horaires',    icon: 'bell',        action: chargerAlertes                      },
+    { label: '👨‍🏫 Planning enseignant', icon: 'user-check',  action: chargerEnseignants                  },
   ]);
 }
  
+// ─────────────────────────────────────────
+// TÉLÉCHARGEMENT PDF
+// GET /api/pdf?filiere_id=&niveau_id=[&jour=]
+// ─────────────────────────────────────────
+function telechargerPDF(jour = null) {
+  if (!selectedFiliereId || !selectedNiveauId) {
+    addMessage('❌ Veuillez d\'abord choisir une filière et un niveau.');
+    return;
+  }
+
+  const params = new URLSearchParams({
+    filiere_id: selectedFiliereId,
+    niveau_id:  selectedNiveauId,
+  });
+  if (jour) params.append('jour', jour);
+
+  addMessage('⏳ Génération du PDF en cours…');
+
+  fetch('/api/pdf?' + params)
+    .then(response => {
+      if (!response.ok) throw new Error('Erreur serveur : ' + response.status);
+      return response.blob();
+    })
+    .then(blob => {
+      const url  = window.URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = jour
+        ? `EDT_${selectedFiliereNom}_${selectedNiveauNom}_${jour}.pdf`
+        : `EDT_${selectedFiliereNom}_${selectedNiveauNom}_Semaine.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      showToast('✅ PDF téléchargé avec succès !');
+    })
+    .catch(err => {
+      addMessage('❌ Impossible de générer le PDF : ' + err.message);
+    });
+}
+
+// ─────────────────────────────────────────
+// TÉLÉCHARGEMENT PDF (PROFESSEUR)
+// ─────────────────────────────────────────
+function telechargerPDFProf(id, nom = 'enseignant') {
+  addMessage('⏳ Génération de votre planning en cours…');
+  fetch('/api/pdf?' + new URLSearchParams({ enseignant_id: id }))
+    .then(response => {
+      if (!response.ok) throw new Error('Erreur serveur : ' + response.status);
+      return response.blob();
+    })
+    .then(blob => {
+      const url  = window.URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      const safeName = nom.replace(/[^a-zA-Z0-9]/g, '_');
+      a.download = `Planning_${safeName}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      showToast('✅ Planning téléchargé avec succès !');
+    })
+    .catch(err => {
+      addMessage('❌ Impossible de générer le PDF : ' + err.message);
+    });
+}
+
 // ─────────────────────────────────────────
 // ÉVÉNEMENTS — champ de saisie
 // ─────────────────────────────────────────
@@ -1038,25 +1401,178 @@ document.getElementById('chat-send').addEventListener('click', envoyerMessage);
 document.getElementById('chat-input').addEventListener('keypress', e => {
   if (e.key === 'Enter') envoyerMessage();
 });
+
+// ─────────────────────────────────────────
+// NOTIFICATIONS — polling toutes les 30s
+// ─────────────────────────────────────────
+let cachedNotifs = [];
+
+async function fetchNotifications() {
+  if (!userRole || userRole === 'null') return;
+  try {
+    const res  = await fetch('/api/notifications');
+    const data = await res.json();
+    cachedNotifs = data.notifications || [];
+    const count = data.unread_count || 0;
+    const badge = document.getElementById('notif-badge');
+    if (badge) {
+      badge.textContent = count;
+      badge.style.display = count > 0 ? 'flex' : 'none';
+    }
+  } catch(e) {}
+}
+
+function toggleNotifDropdown() {
+  const dropdown = document.getElementById('notif-dropdown');
+  if (!dropdown) return;
+  const visible = dropdown.style.display === 'block';
+  dropdown.style.display = visible ? 'none' : 'block';
+  if (!visible) {
+    renderNotifDropdown();
+    // Marquer tout comme lu
+    fetch('/api/notifications/read-all', {
+      method: 'PUT',
+      headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content }
+    }).then(() => {
+      const badge = document.getElementById('notif-badge');
+      if (badge) badge.style.display = 'none';
+    });
+  }
+}
+
+function renderNotifDropdown() {
+  const dropdown = document.getElementById('notif-dropdown');
+  if (!dropdown) return;
+
+  const typeColor = { success:'#10B981', warning:'#F59E0B', info:'#3B82F6', danger:'#EF4444' };
+
+  if (!cachedNotifs.length) {
+    dropdown.innerHTML = `
+      <div style="padding:20px;text-align:center;color:#94A3B8;font-size:13px;">
+        <div style="font-size:24px;margin-bottom:6px">🔔</div>
+        Aucune notification
+      </div>`;
+    return;
+  }
+
+  dropdown.innerHTML = `
+    <div style="padding:10px 14px 8px;border-bottom:1px solid #F1F5F9;display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:12px;font-weight:700;color:#1E293B;">Notifications</span>
+      <span style="font-size:11px;color:#94A3B8;">${cachedNotifs.length} récentes</span>
+    </div>
+    ${cachedNotifs.map(n => `
+      <div style="padding:10px 14px;border-bottom:1px solid #F8FAFF;${n.unread ? 'background:#F0F6FF;' : ''}">
+        <div style="display:flex;align-items:flex-start;gap:8px;">
+          <span style="width:8px;height:8px;border-radius:50%;background:${typeColor[n.type] || '#94A3B8'};flex-shrink:0;margin-top:5px;"></span>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;font-weight:600;color:#1E293B;margin-bottom:2px;">${n.titre}</div>
+            <div style="font-size:11.5px;color:#475569;line-height:1.5;">${n.message}</div>
+            <div style="font-size:10px;color:#94A3B8;margin-top:3px;">${n.date}</div>
+          </div>
+        </div>
+      </div>
+    `).join('')}`;
+}
+
+// Fermer le dropdown si on clique ailleurs
+document.addEventListener('click', e => {
+  const btn      = document.getElementById('notif-btn');
+  const dropdown = document.getElementById('notif-dropdown');
+  if (dropdown && btn && !btn.contains(e.target) && !dropdown.contains(e.target)) {
+    dropdown.style.display = 'none';
+  }
+});
+
+// Lancer le polling au démarrage
+fetchNotifications();
+setInterval(fetchNotifications, 30000);
  
 // ─────────────────────────────────────────
 // DÉMARRAGE
 // ─────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   lucide.createIcons();
-  showQuickSuggestions([
-    { label: 'edt',     icon: 'calendar' },
-    { label: 'alertes', icon: 'bell' },
-    { label: 'aide',    icon: 'help-circle' },
-  ]);
-  addMessage('Bonjour 👋 Je suis votre assistant emploi du temps de l\'UGANC.');
-  setTimeout(() => {
-    addMessage('Je peux vous aider à consulter vos cours, voir les modifications récentes ou afficher le planning d\'un enseignant.');
+  
+  if (!userRole || userRole === 'null') {
+    // Non connecté ou pas de rôle
+    showQuickSuggestions([
+      { label: 'edt',     icon: 'calendar' },
+      { label: 'alertes', icon: 'bell' },
+      { label: 'aide',    icon: 'help-circle' },
+    ]);
+    addMessage('Bonjour 👋 Je suis votre assistant emploi du temps de l\'UGANC.');
     setTimeout(() => {
-      addMessage('Comment puis-je vous aider ? Vous pouvez cliquer sur un bouton ou m\'écrire directement (ex : "edt", "alertes", "lundi"...)');
-      showOptionsAccueilRapide();
-    }, 500);
-  }, 400);
+      addMessage('Sélectionnez votre <strong>département (filière)</strong> pour voir l\'emploi du temps semestriel, les alertes de modification ou le planning d\'un enseignant.');
+      setTimeout(() => {
+        showOptionsAccueilRapide();
+      }, 400);
+    }, 400);
+    return;
+  }
+
+  // Rôle : Étudiant
+  if (userRole === 'etudiant') {
+    if (selectedFiliereId && selectedNiveauId) {
+      showQuickSuggestions([
+        { label: 'semestriel', icon: 'layout-list' },
+        { label: 'semaine',    icon: 'calendar-range' },
+        { label: 'alertes',    icon: 'bell' },
+      ]);
+      addMessage(`Bonjour <strong>${userName}</strong> 👋 Je suis votre assistant emploi du temps de l'UGANC.`);
+      setTimeout(() => {
+        addMessage(`Votre profil étudiant est configuré pour le département <strong>${selectedFiliereNom}</strong> (${selectedNiveauNom}). Que souhaitez-vous consulter ?`);
+        setTimeout(() => {
+          showOptions([
+            { label: '📋 Mon EDT semestriel',  icon: 'layout-list', action: chargerSemesterComplet,   style: 'primary' },
+            { label: '📅 Par jour',            icon: 'calendar-days', action: afficherChoixJour },
+            { label: '📆 Semaine courante',    icon: 'calendar-range', action: chargerSemaine },
+            { label: '🔔 Alertes horaires',    icon: 'bell',        action: chargerAlertes                      },
+            { label: '👨‍🏫 Planning enseignant', icon: 'user-check',  action: chargerEnseignants                  },
+          ]);
+        }, 400);
+      }, 400);
+    } else {
+      addMessage(`Bonjour <strong>${userName}</strong> 👋 Votre profil étudiant n'est pas encore complètement configuré.`);
+      setTimeout(() => { showOptionsAccueilRapide(); }, 400);
+    }
+  } 
+  // Rôle : Professeur
+  else if (userRole === 'prof') {
+    showQuickSuggestions([
+      { label: 'mes cours', icon: 'book-open' },
+      { label: 'alertes',   icon: 'bell' },
+    ]);
+    addMessage(`Bonjour Professeur <strong>${userName}</strong> 👋 Je suis votre assistant UGANC.`);
+    setTimeout(() => {
+      addMessage(`Que souhaitez-vous faire aujourd'hui ?`);
+      setTimeout(() => {
+        showOptions([
+          { label: '📚 Mes cours assignés', icon: 'book-open', action: () => window.location.href='/tableau-de-bord', style: 'primary' },
+          { label: '📆 Mon planning', icon: 'calendar-range', action: () => chargerPlanningEnseignant(profEnseignantId, userName) },
+          { label: '🔔 Dernières alertes', icon: 'bell', action: chargerAlertes },
+        ]);
+      }, 400);
+    }, 400);
+  }
+  // Rôle : Chef de programme
+  else if (userRole === 'chef') {
+    showQuickSuggestions([
+      { label: 'département', icon: 'building' },
+      { label: 'alertes',     icon: 'bell' },
+    ]);
+    addMessage(`Bonjour Chef de programme <strong>${userName}</strong> 👋`);
+    setTimeout(() => {
+      addMessage(`Votre espace administratif pour <strong>${selectedFiliereNom || 'votre département'}</strong> est prêt. Que souhaitez-vous consulter ?`);
+      setTimeout(() => {
+        showOptions([
+          { label: '⚙️ Gérer le département', icon: 'settings', action: () => window.location.href='/tableau-de-bord', style: 'primary' },
+          { label: '📋 Emplois du temps', icon: 'calendar-days', action: showOptionsAccueilRapide },
+          { label: '🔔 Dernières alertes', icon: 'bell', action: chargerAlertes },
+          { label: '👨‍🏫 Planning enseignant', icon: 'users', action: chargerEnseignants },
+        ]);
+      }, 400);
+    }, 400);
+  }
 });
 </script>
 </body>

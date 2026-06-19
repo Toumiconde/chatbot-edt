@@ -9,7 +9,7 @@ class EmploiDuTemps extends Model
     protected $table = 'emplois_du_temps';
 
     protected $fillable = [
-        'filiere_id', 'niveau_id', 'matiere_id',
+        'filiere_id', 'niveau_id', 'semestre', 'matiere_id',
         'enseignant_id', 'salle_id', 'jour',
         'heure_debut', 'heure_fin',
     ];

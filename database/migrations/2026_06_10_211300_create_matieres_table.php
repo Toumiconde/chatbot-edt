@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('nom');
             $table->string('code');
             $table->integer('credits')->default(3);
+            $table->foreignId('filiere_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('niveau_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('semestre')->nullable();
             $table->timestamps();
         });
     }

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -8,6 +8,8 @@ return new class extends Migration
 {
     public function up()
     {
+        // Ensure the sessions table is removed if it already exists (prevents duplicate table errors)
+        Schema::dropIfExists('sessions');
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->foreignId('user_id')->nullable()->index();

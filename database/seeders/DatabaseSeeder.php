@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             SalleSeeder::class,
             EmploiDuTempsSeeder::class,
             ModificationSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

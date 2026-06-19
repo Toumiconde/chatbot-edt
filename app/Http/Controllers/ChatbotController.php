@@ -10,6 +10,7 @@ class ChatbotController extends Controller
 {
     public function index()
     {
+        // Le chatbot est accessible à tous les rôles via le lien "Chatbot" du menu
         return view('chatbot.index');
     }
 
@@ -20,8 +21,10 @@ class ChatbotController extends Controller
 
     public function getNiveaux($filiereId)
     {
-        $filiere = Filiere::with('niveaux')->findOrFail($filiereId);
-        return response()->json($filiere->niveaux);
+        // On retourne tous les niveaux de manière unique (L1, L2, L3)
+        // puisque le filtre filiere est maintenant géré implicitement par le combo Filiere + Niveau
+        $niveaux = \App\Models\Niveau::all()->unique('libelle')->values();
+        return response()->json($niveaux);
     }
 
     public function getEnseignants()

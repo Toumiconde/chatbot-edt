@@ -12,6 +12,20 @@ class PDFController extends Controller
 {
     public function generer(Request $request)
     {
+        if ($request->filled('enseignant_id')) {
+            $enseignant = \App\Models\Enseignant::findOrFail($request->enseignant_id);
+            $query = EmploiDuTemps::with(['matiere', 'filiere', 'niveau', 'salle'])
+                ->where('enseignant_id', $request->enseignant_id);
+            
+            $titre = "Planning de " . $enseignant->prenom . " " . $enseignant->nom;
+            $cours = $query->orderBy('jour')->orderBy('heure_debut')->get();
+            $filiere = null;
+            $niveau = null;
+
+            $pdf = Pdf::loadView('pdf.emploi_du_temps', compact('cours', 'filiere', 'niveau', 'titre', 'enseignant'));
+            return $pdf->download('planning_enseignant.pdf');
+        }
+
         $request->validate([
             'filiere_id' => 'required|integer|exists:filieres,id',
             'niveau_id'  => 'required|integer|exists:niveaux,id',

@@ -9,9 +9,22 @@ class FiliereSeeder extends Seeder
 {
     public function run(): void
     {
+        // Supprimer les anciennes données pour éviter les doublons
+        DB::table('filieres')->truncate();
+
         DB::table('filieres')->insert([
-            ['nom' => 'Licence Informatique', 'code' => 'L-INFO', 'created_at' => now(), 'updated_at' => now()],
-            ['nom' => 'Licence Mathematiques', 'code' => 'L-MATH', 'created_at' => now(), 'updated_at' => now()],
+            [
+                'nom'        => 'Nouvelles Technologies de l\'Information et de la Communication',
+                'code'       => 'NTIC',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'nom'        => 'Développement Logiciel',
+                'code'       => 'DL',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }
